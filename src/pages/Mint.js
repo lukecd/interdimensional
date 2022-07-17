@@ -22,7 +22,11 @@ const Mint = () => {
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>2. Pick An Instrument</h1>
             <div className='pt-3'>
-              <span> TODO</span>
+            <input className='' type="radio" name="instrument" value="Pad"/><span className='bg-secondary ml-1 mr-5'>Pad</span>
+            <input className='' type="radio" name="instrument" value="Melody1"/><span className='bg-secondary ml-1 mr-5'>Melody 1</span>
+            <input className='' type="radio" name="instrument" value="Melody2"/><span className='bg-secondary ml-1 mr-5'>Melody 2</span>
+            <input className='' type="radio" name="instrument" value="Bass"/><span className='bg-secondary ml-1 mr-5'>Bass</span>
+
             </div>
           </div>   
 

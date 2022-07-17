@@ -58,8 +58,8 @@ class Performer {
         this.x = this.position.position.x;
         this.y = this.position.position.y;
 
-        // basically let the animation run for 1.5 secs
-        if(this.frameCounter > 100) this.shouldAnimate = false;
+        // change this value to modify the length of the animation
+        if(this.frameCounter > 200) this.shouldAnimate = false;
 
         if(this.shouldAnimate) {
           this.frameCounter++;

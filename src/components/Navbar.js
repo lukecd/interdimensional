@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import {FaBars, FaTimes} from 'react-icons/fa';
 import { FiPlay, FiPause } from 'react-icons/fi';
 
+import * as Tone from "tone"
 
 /**
  * @returns Top navigation bar

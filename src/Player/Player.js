@@ -53,7 +53,7 @@ class Player {
         }
         this.performers = performers;
 
-        this.conductor = new Conductor(this.performers, this.particles);
+        this.conductor = new Conductor(this, this.performers, this.particles);
 
         this.setupWalls();
 
@@ -61,9 +61,6 @@ class Player {
 
         // handle collisions
         this.setupEvents();
-
-        // setup our particle array
-        this.initParticles();
 
         // handle resizing
         window.addEventListener('resize', this.resize.bind(this), false);
@@ -166,19 +163,15 @@ class Player {
       
     }
 
-    initParticles() {
-        if(this.particles.length < this.maxParticles) {
-            // randomally select an performer
-            const performerId = Math.floor(Math.random() * this.performers.length);
-            this.performers[performerId].emit();
-            this.particles.push(new Particle(this.performers[performerId].x, 
-                this.performers[performerId].y, 
-                this.performers[performerId].radius / 2, 
-                this.performers[performerId].color,
-                this.ctx,
-                this.engine));
-
-        }
+    emit(performerId) {
+        console.log("emitting particle for id ", performerId);
+        this.performers[performerId].emit();
+        this.particles.push(new Particle(this.performers[performerId].x, 
+            this.performers[performerId].y, 
+            this.performers[performerId].radius / 2, 
+            this.performers[performerId].color,
+            this.ctx,
+            this.engine));
     }
 
     resize() {
@@ -193,11 +186,14 @@ class Player {
 
 
     animate(t) {
+        // this is kinda messy, probably slows stuff down with too many calls. 
+        // TODO; reorganize
         if(window.$music_playing) {
             this.conductor.play();
         }
-        // call initParticles each time in case we just deleted one
-        this.initParticles();
+        else {
+            this.conductor.pause()
+        }
 
         this.ctx.fillStyle = this.bgColor;
         this.ctx.fillRect(0, 0, this.width, this.height);
