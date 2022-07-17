@@ -6,14 +6,21 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 import React, { useState } from 'react';
 import {FaBars, FaTimes} from 'react-icons/fa';
+import { FiPlay, FiPause } from 'react-icons/fi';
 
 
 /**
  * @returns Top navigation bar
  */
-const Navbar = () => {
+const Navbar = (props) => {
     const [nav, setNav] = useState(false);
+    const [showPlay, setShowPlay] = useState(false);
     const handleClick = () => setNav(!nav);
+
+    const playPause = () => {
+        setShowPlay(!showPlay);
+        window.$music_playing = !showPlay;
+    }
 
     return (
         <div className='fixed w-full h-[90px] flex justify-between items-center text-[#15274c] z-10 bg-black'>
@@ -21,10 +28,18 @@ const Navbar = () => {
                 
             </div>
             {/* desktop menu */} 
-            <ul className='hidden lg:flex px:5 py:5'>
+            <ul className='hidden lg:flex justify-items-center items-center px:5 py:5'>
+                <li>
+                    {showPlay && (
+                        <FiPause size={40} onClick={playPause} className='hover:bg-[#d31a83] hover:border-[#d31a83] w-[40px]'/>
+                    )}
+                   {!showPlay && (
+                        <FiPlay size={40} onClick={playPause} className='hover:bg-[#d31a83] hover:border-[#d31a83] w-[40px]'/>
+                    )}
+                </li>
                 <li>
                     <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/">
-                        Play
+                        Stage
                     </Link>
                 </li>
                 <li>
@@ -54,8 +69,8 @@ const Navbar = () => {
             {/* mobile menu */}
             <ul className={!nav ? 'hidden' : 'absolute top-0 left-0 w-full h-screen bg-[#d31a83] text-white flex flex-col justify-center items-center' }>
                 <li  className='py-6 text-4xl'>
-                     <Link onClick={handleClick} to="top" to='/play'>
-                        Play
+                     <Link onClick={handleClick} to="top" to='/'>
+                        Stage
                     </Link>
                 </li>
                 <li className='py-6 text-4xl'>

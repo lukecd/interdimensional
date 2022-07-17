@@ -2,7 +2,7 @@ import Matter from 'matter-js';
 import Particle from './Particle.js';
 import chroma from "chroma-js";
 
-class Emitter {
+class Performer {
 
     constructor(x, y, radius, color, ctx, engine) {
         this.x = x; 
@@ -89,4 +89,4 @@ class Emitter {
     }
 }
 
-export default Emitter;
+export default Performer;

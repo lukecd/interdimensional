@@ -1,14 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import "./index.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Play from "./pages/Play";
-import Mint from "./pages/Mint";
-import Swap from "./pages/Swap";
-import About from "./pages/About";
-import Canvas from "./Player/Canvas";
+
+
+import App from './App';
 
 import '@rainbow-me/rainbowkit/styles.css'
 import {
@@ -45,6 +42,10 @@ const { chains, provider } = configureChains(
     provider
   })
 
+// i need to learn more about sharing state between react and my canvas animations
+// but that's another rabbit hole for another day. going hacky style so I can 
+// focus on the music now.
+window.$music_playing = false;
   
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -52,17 +53,7 @@ root.render(
   <WagmiConfig client={wagmiClient}>
   <RainbowKitProvider chains={chains} theme={darkTheme()}>
       <BrowserRouter>
-      <Canvas className='flex flex-col w-full h-full z-0'
-              height={window.innerHeight} width={window.innerWidth} />
-      <div className='absolute w-full h-full z-1 top-0'>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Play />} />
-            <Route path="/" element={<Mint />} />
-            <Route path="/" element={<Swap />} />
-            <Route path="/" element={<About />} />
-          </Routes>
-        </div>
+        <App />
       </BrowserRouter>
   </RainbowKitProvider>
   </WagmiConfig>

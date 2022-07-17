@@ -1,7 +1,8 @@
-import Emitter from './Emitter.js';
+import Performer from './Performer.js';
 import Matter from 'matter-js';
 import Particle from './Particle.js';
 import chroma from "chroma-js";
+import Conductor from './Conductor.js';
 
 /**
  * Ok, honestly this seem a bit kludgy to have this one draw method 
@@ -27,32 +28,33 @@ class Player {
 
         this.bgColor = '#12082D';
         this.colors = ['#8F0380', '#EC205B', '#FC7208', '#D00204', '#7701AD'];
-        this.maxParticles = 30;
-        this.emitterRadius = 50;
-        this.numEmitters = 5;
+        this.maxParticles = 5;
+        this.performerRadius = 50;
+        this.numPerformers = 5;
         
         // no, this not bad OOP, it's just the easiest way to manage things. 
-        // both particles and emitters are both at the same level as we need an 
-        // easy way to handle merging particles made by different emitters. 
-        // if particles were a child class of emitters, it would be tricky to handle
-        // cross-emitter merges.
+        // both particles and performers are both at the same level as we need an 
+        // easy way to handle merging particles made by different performers. 
+        // if particles were a child class of performers, it would be tricky to handle
+        // cross-performer merges.
         this.particles = [];
-        let emitters = [];
+        let performers = [];
         for(let i=0; i<this.colors.length; i++) {
             // random, but giving room so we don't go off screen
-            let x = Math.random()* (window.innerWidth-(2*this.emitterRadius)) + (2*this.emitterRadius);
-            let y = Math.random()* (window.innerHeight-(2*this.emitterRadius)) + (2*this.emitterRadius);
-            emitters[i] = new Emitter(x, 
+            let x = Math.random()* (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
+            let y = Math.random()* (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
+            performers[i] = new Performer(x, 
                                       y,
-                                      this.emitterRadius,
-                                      //this.colors[Math.floor(Math.random() * this.numEmitters)],
+                                      this.performerRadius,
+                                      //this.colors[Math.floor(Math.random() * this.numPerformers)],
                                       this.colors[i],
                                       this.ctx,
                                       this.engine);
         }
-        this.emitters = emitters;
+        this.performers = performers;
 
-        //todo: for some reason if i pass window.innerWidth, the width isn't long enough
+        this.conductor = new Conductor(this.performers, this.particles);
+
         this.setupWalls();
 
         this.cDetector = Matter.Detector.create();
@@ -94,48 +96,58 @@ class Player {
                         else if(self.particles[j].id == idB) indexB = j;
                     }
                     // change color of particle A to a mix of A & B
-                    const newColor = chroma.mix(self.particles[indexA].color, self.particles[indexB].color);
+                    const newColor = self.evolveColor(self.particles[indexA].color, self.particles[indexB].color);
                     self.particles[indexA].updateColor(newColor);
 
-                    // kill off particle B
-                    self.particles[indexB].kill();
-                    self.particles.splice(indexB, 1);
+                    // retire particle B
+                    self.particles[indexB].retire();
                  }
-                 // if a particle hits an emitter, merge both of their colors
-                 else if ( (pairs[i].bodyA.label === 'particle' && pairs[i].bodyB.label === 'emitter') ||
-                           (pairs[i].bodyA.label === 'emitter' && pairs[i].bodyB.label === 'particle')) {
+                 // if a particle hits an performer, merge both of their colors
+                 else if ( (pairs[i].bodyA.label === 'particle' && pairs[i].bodyB.label === 'performer') ||
+                           (pairs[i].bodyA.label === 'performer' && pairs[i].bodyB.label === 'particle')) {
                     let particleId = -1;
-                    let emitterId = -1;
+                    let performerId = -1;
                     if(pairs[i].bodyA.label === 'particle') {
-                        // bodyA is particle, bodyB is emitter
+                        // bodyA is particle, bodyB is performer
                         particleId = pairs[i].bodyA.id;
-                        emitterId = pairs[i].bodyB.id;
+                        performerId = pairs[i].bodyB.id;
                     }
                     else {
-                         // bodyA is emitter, bodyB is particle
-                         emitterId = pairs[i].bodyA.id;
+                         // bodyA is performer, bodyB is particle
+                         performerId = pairs[i].bodyA.id;
                          particleId = pairs[i].bodyB.id;    
                     }
                     let indexParticle = -1;
-                    let indexEmitter = -1;
+                    let indexPerformer = -1;
                     // find the array index of the particle
                     for(let j=0; j<self.particles.length; j++) {
                         if(self.particles[j].id == particleId) indexParticle = j;
                     }
-                    // find the array index of the emitter                    
-                    for(let j=0; j<self.emitters.length; j++) {
-                        if(self.emitters[j].id == emitterId) indexEmitter = j;
+                    // find the array index of the performer                    
+                    for(let j=0; j<self.performers.length; j++) {
+                        if(self.performers[j].id == performerId) indexPerformer = j;
                     }
                
-                    const newColor = chroma.mix(self.particles[indexParticle].color, 
-                        self.emitters[indexEmitter].color);
+                    const newColor = self.evolveColor(self.particles[indexParticle].color, 
+                        self.performers[indexPerformer].color);
                     self.particles[indexParticle].updateColor(newColor); 
-                    self.emitters[indexEmitter].updateColor(newColor); 
+                    self.performers[indexPerformer].updateColor(newColor); 
                  }
              }
          });
     }
 
+    /**
+     * @notice Logic for evolving a color on collision
+     * Most of the time uses chroma.mix and mixes them, some of the time
+     * a totally random color is sent back. Encapsualted the logic
+     * into this function as it will likely change lots as the app develops.
+     */
+    evolveColor(c1, c2) {
+        const rnd = Math.random();
+        if(rnd >= 0.5) return chroma.mix(c1, c2);
+        return chroma.random();
+    }
 
     setupWalls() {
         const wallOptions = {
@@ -156,27 +168,23 @@ class Player {
 
     initParticles() {
         if(this.particles.length < this.maxParticles) {
-            // randomally select an emitter
-            const emitterId = Math.floor(Math.random() * this.emitters.length);
-            this.emitters[emitterId].emit();
-            this.particles.push(new Particle(this.emitters[emitterId].x, 
-                this.emitters[emitterId].y, 
-                this.emitters[emitterId].radius / 2, 
-                this.emitters[emitterId].color,
+            // randomally select an performer
+            const performerId = Math.floor(Math.random() * this.performers.length);
+            this.performers[performerId].emit();
+            this.particles.push(new Particle(this.performers[performerId].x, 
+                this.performers[performerId].y, 
+                this.performers[performerId].radius / 2, 
+                this.performers[performerId].color,
                 this.ctx,
                 this.engine));
 
         }
     }
 
-    addParticle() {
-
-    }
-
     resize() {
         this.width =  window.innerWidth;
         this.height =  window.innerHeight;
-        // todo check if resize moved emitters off screen
+        // todo check if resize moved performers off screen
     }
 
     getRandom(min, max) {
@@ -185,17 +193,28 @@ class Player {
 
 
     animate(t) {
+        if(window.$music_playing) {
+            this.conductor.play();
+        }
         // call initParticles each time in case we just deleted one
         this.initParticles();
 
         this.ctx.fillStyle = this.bgColor;
         this.ctx.fillRect(0, 0, this.width, this.height);
-        for(let i=0; i<this.numEmitters; i++) {
-            this.emitters[i].draw();
+        for(let i=0; i<this.numPerformers; i++) {
+            this.performers[i].draw();
         }
 
         for(let i=0; i<this.particles.length; i++) {
-            this.particles[i].draw();
+            // since we want the retirement fade away animation to finish, 
+            // we constantly check if it's done and then we remove from the master array.
+            if(this.particles[i].isRetired) {
+                this.particles.splice(i, 1);
+                i++; // increase i since our array is now i shorter
+            }
+            else {
+                this.particles[i].draw();
+            }
         }
         requestAnimationFrame(this.animate.bind(this));
     }
