@@ -14,27 +14,38 @@ import contractABI from '../abi/MosEisleyCantina.json';
  */
 const PerformerViewer = (props) => {
 
-  let [svg, setSVG] = useState([]);
+  let [imgURL, setImgURL] = useState([]);
+  let [performerType, setPerformerType] = useState([]);
+  let [performerInstrument, setPerformerInstrument] = useState([]);
+  let [performerData, setPerformerData] = useState([]);
 
   const { data: curNFT } = useContractRead({
     addressOrName: window.$CONTRACT_ADDRESS,
     contractInterface: contractABI,
     functionName: "getTokenURI",
     watch: false,
-    args: 3
+    args: props.tokenId
   });
 
   useEffect(() => {
-console.log("window.$CONTRACT_ADDRESS ", window.$CONTRACT_ADDRESS)
     if (curNFT) {
-      console.log("curNFT ", curNFT);
-      setSVG(curNFT);
+      const beginning = "data:application/json;base64,";
+      let decode = curNFT.substring(beginning.length)
+
+
+      decode = atob(decode);
+      console.log("decode ", decode);
+      let nftOBJ = JSON.parse(decode);
+      setImgURL(nftOBJ.image);
+      setPerformerType(nftOBJ.performerType);
+      setPerformerInstrument(nftOBJ.performerInstrument);
+      setPerformerData(nftOBJ.performerData);
     }
   }, []);
 
   return (
     <div>
-      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuZGV2L3N2Z2pzIiB2aWV3Qm94PSIwIDAgODAwIDgwMCI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgc3R5bGU9ImZpbGw6IzsiLz48cmVjdCB4PSIxMCUiIHk9Ijg1JSIgd2lkdGg9IjgwJSIgaGVpZ2h0PSIxMCUiIHN0eWxlPSJmaWxsOiMjYmMwMGE5OyIvPjx0ZXh0IHN0eWxlPSJmaWxsOiAjRkM3MjA4OyBmb250LWZhbWlseTogJnF1b3Q7QXJpYWwgQmxhY2smcXVvdDs7IGZvbnQtc2l6ZTogM2VtOyB3aGl0ZS1zcGFjZTogcHJlOyIgeD0iMTUlIiB5PSI5MiUiPkRlZXAgQ2FueW9uIERyZWFtczwvdGV4dD48bWV0YWRhdGE+PHBlcmZvcm1lclR5cGU+cGFkPC9wZXJmb3JtZXJUeXBlPjxwZXJmb3JtZXJJbnN0cnVtZW50PnBhZC1jYW55b248L3BlcmZvcm1lckluc3RydW1lbnQ+PHBlcmZvcm1lckRhdGE+N3wxNjwvcGVyZm9ybWVyRGF0YT48L21ldGFkYXRhPjwvc3ZnPg==" />
+      <img src={imgURL} />
     </div>
   )
 }

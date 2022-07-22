@@ -24,7 +24,6 @@ const Mixer = () => {
 
   useEffect(() => {
     console.log("window.$CONTRACT_ADDRESS", window.$CONTRACT_ADDRESS);
-    console.log("allNFTs ", allNFTs);
     if (allNFTs) {
       console.log("allNFTs ", allNFTs);
       setNFTs(allNFTs);
@@ -40,8 +39,8 @@ const Mixer = () => {
 
       {nfts.map(nft => {
         return (
-          <div className="w-1/3 pl-2 pr-2 pt-2">
-          <PerformerViewer tokenId={nft.tokenId.toString()} />
+          <div className="w-1/3 pl-2 pr-2 pt-5">
+          <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} />
           </div>
         );
       })}

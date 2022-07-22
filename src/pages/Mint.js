@@ -33,7 +33,8 @@ const Mint = () => {
   // function mint(string memory name, string memory pColor, string memory sColor, 
   //   string memory pType, string memory pInstrument, string memory pData, uint256 price) public {
   const mintNFT = async () => {
-    const sColor = chroma(color.hex).saturate(3).hex();
+    //const sColor = chroma(color.hex).saturate(3).hex();
+    const sColor = "#FFFFFF";
     console.log('performerName', performerName);
     console.log('color', color.hex);    
     console.log('sColor', sColor);
@@ -45,7 +46,7 @@ const Mint = () => {
     const parsedPrice = ethers.utils.parseEther(""+price);
     console.log('parsedPrice', parsedPrice);
 
-    await createPerformer({args: [performerName, color, sColor, performerType, performerInstrument, performerData, parsedPrice]});
+    await createPerformer({args: [performerName, color.hex, sColor, performerType, performerInstrument, performerData, parsedPrice]});
   }
 
 
