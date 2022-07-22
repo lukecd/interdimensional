@@ -10,7 +10,7 @@ import Matter from 'matter-js';
  */
 const Canvas = (props) => {
   const canvas = React.useRef();
-  let context = null;
+  let ctx = null;
   let engine = null;
 
   React.useEffect(() => {
@@ -26,16 +26,27 @@ const Canvas = (props) => {
       engine.inertia = Infinity;
       engine.restitution = 1;
 
-      context = canvas.current.getContext("2d");
+      ctx = canvas.current.getContext("2d");
 
-      draw(context, canvas, engine);
+      // const handleResize = e => {
+      //   ctx.canvas.height = window.innerHeight;
+      //   ctx.canvas.width = window.innerWidth;
+      // };
+  
+      // handleResize();
+      // window.addEventListener("resize", handleResize);
+  
+      // return () => window.removeEventListener("resize", handleResize);
+
+      draw(ctx, canvas, engine);
       Matter.Runner.run(engine);
   }, []);
-
   
 
   return <canvas ref={canvas} height={props.height} width={props.width} />;
 };
+
+
 
 Canvas.propTypes = {
   height: PropTypes.number.isRequired,

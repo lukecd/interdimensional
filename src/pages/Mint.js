@@ -1,12 +1,58 @@
-import React from 'react'
+import React, { useState} from "react";
 import { ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/lib/css/styles.css";
+import {
+  useContractWrite,
+  useContractRead,
+  useWaitForTransaction,
+} from "wagmi";
+import { ethers } from "ethers";
+import chroma from "chroma-js";
+import contractABI from '../abi/MosEisleyCantina.json';
 
 const Mint = () => {
-  const [color, setColor] = useColor("hex", "#121212");
+  let [color, setColor] = useColor("hex", "#121212");
+  let [performerName, setPerformerName] = useState("");
+  let [performerType, setPerformerType] = useState("");
+  let [performerInstrument, setPerformerInstrument] = useState("");
+  let [performerData, setPerformerData] = useState("7|16");
+  let [price, setPrice] = useState(0);
+
+  const {
+    data: mintData,
+    write: createPerformer,
+    isLoading: isMintLoading,
+    isSuccess: isMintStarted,
+    error: mintError,
+  } = useContractWrite({
+    addressOrName: window.$CONTRACT_ADDRESS,
+    contractInterface: contractABI,
+    functionName: "mint",
+  });
+
+  // function mint(string memory name, string memory pColor, string memory sColor, 
+  //   string memory pType, string memory pInstrument, string memory pData, uint256 price) public {
+  const mintNFT = async () => {
+    const sColor = chroma(color.hex).saturate(3).hex();
+    console.log('performerName', performerName);
+    console.log('color', color.hex);    
+    console.log('sColor', sColor);
+
+    console.log('performerType', performerType);
+    console.log('performerInstrument', performerInstrument);
+    console.log('performerData', performerData);
+    console.log('price', price);
+    const parsedPrice = ethers.utils.parseEther(""+price);
+    console.log('parsedPrice', parsedPrice);
+
+    await createPerformer({args: [performerName, color, sColor, performerType, performerInstrument, performerData, parsedPrice]});
+  }
+
+
+
 
   return (
-    <div className='mt-[90px] w-screen h-screen z-0 bg-background'>
+    <div className='mt-[90px] w-screen h-screen bg-background'>
       <div className='flex flex-col pl-8 pr-8 pb-8 ml-8 mr-8 bg-primary border-8 border-secondary '>
         <h1 className='text-4xl align-center font-heading'>Mint A Performer</h1>
 
@@ -15,40 +61,45 @@ const Mint = () => {
             <div className='pt-3'>
               <ColorPicker width={456} height={228} 
                         color={color} 
-                        onChange={setColor} hideHSV dark />
+                        onChange={setColor} hideHSV hideRGB dark />
             </div>
         </div>
 
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>2. Pick An Instrument</h1>
             <div className='pt-3'>
-            <input className='' type="radio" name="instrument" value="Pad"/><span className='bg-secondary ml-1 mr-5'>Pad</span>
-            <input className='' type="radio" name="instrument" value="Melody1"/><span className='bg-secondary ml-1 mr-5'>Melody 1</span>
-            <input className='' type="radio" name="instrument" value="Melody2"/><span className='bg-secondary ml-1 mr-5'>Melody 2</span>
-            <input className='' type="radio" name="instrument" value="Bass"/><span className='bg-secondary ml-1 mr-5'>Bass</span>
-
+            <input className='' type="radio" name="instrument" value="Pad" onChange={(e) => {setPerformerType('pad'); setPerformerInstrument('pad-canyon');}}/><span className='bg-secondary ml-1 mr-5'>Deep Canyon Pad</span>
+            <input className='' type="radio" name="instrument" value="rhythm1" onChange={(e) => {setPerformerType('rhythm'); setPerformerInstrument('mallet-marimba');}}/><span className='bg-secondary ml-1 mr-5'>Marimba</span>
+            <input className='' type="radio" name="instrument" value="rhythm2" onChange={(e) => {setPerformerType('rhythm'); setPerformerInstrument('mallet-mellow');}}/><span className='bg-secondary ml-1 mr-5'>Mellow Mallets</span>
             </div>
           </div>   
 
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>3. Give Them A Name</h1>
-            <div className='pt-3'>
-            <input class="block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"  type="text" name="search"/>
+            <div className='w-1/3 pt-3'>
+            <input onChange={(e) => setPerformerName(e.target.value)} 
+                   className="block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"  
+                   type="text" 
+                   name="price"
+                   maxlength="18"/>
 
             </div>
           </div>  
 
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>4. Set A Price</h1>
-            <div className='pt-3'>
-            <input class="block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"  type="text" name="search"/>
+            <div className='w-1/3 pt-3'>
+            <input onChange={(e) => setPrice(e.target.value)} 
+                   className="block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"  
+                   type="number" 
+                   name="price"/>
             </div>         
           </div>  
              
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>5. Mint</h1>
             <div className='pt-3'>
-              <button class="bg-primary hover:primary text-white font-semibold hover:text-white py-2 px-4 border border-secondary hover:bg-secondary rounded">
+              <button onClick={mintNFT} className="bg-primary hover:primary text-white font-semibold hover:text-white py-2 px-4 border border-secondary hover:bg-secondary rounded">
                 Mint
               </button>
             </div>         

@@ -24,7 +24,7 @@ const Navbar = (props) => {
     }
 
     return (
-        <div className='fixed w-full h-[90px] flex justify-between items-center text-[#15274c] z-10 bg-black'>
+        <div className='fixed w-full h-[90px] flex justify-between items-center text-[#15274c]'>
             <div>
                 
             </div>
@@ -41,6 +41,11 @@ const Navbar = (props) => {
                 <li>
                     <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/">
                         Stage
+                    </Link>
+                </li>
+                <li>
+                    <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/mixer">
+                        Mixer
                     </Link>
                 </li>
                 <li>
@@ -72,6 +77,11 @@ const Navbar = (props) => {
                 <li  className='py-6 text-4xl'>
                      <Link onClick={handleClick} to="top" to='/'>
                         Stage
+                    </Link>
+                </li>
+                <li className='py-6 text-4xl'>
+                     <Link onClick={handleClick} to="me" to='/mixer'>
+                        Mixer
                     </Link>
                 </li>
                 <li className='py-6 text-4xl'>

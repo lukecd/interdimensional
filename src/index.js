@@ -46,7 +46,7 @@ const { chains, provider } = configureChains(
 // but that's another rabbit hole for another day. going hacky style so I can 
 // focus on the music now.
 window.$music_playing = false;
-  
+window.$CONTRACT_ADDRESS = "0x1a204cA3B80EE96f976611A98451Ee5F7e94FDf0";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

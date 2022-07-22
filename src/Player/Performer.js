@@ -27,9 +27,9 @@ class Performer {
             }           
         });
 
-        const mouse = Matter.Mouse.create(ctx.canvas);
+        const mMouse = Matter.Mouse.create(ctx.canvas);
         const mConstraint = Matter.MouseConstraint.create(engine, ctx.canvas, {
-          mouse: mouse
+          mouse: mMouse
         });
         Matter.Composite.add(engine.world, [this.position, mConstraint]);
 

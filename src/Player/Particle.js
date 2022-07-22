@@ -69,16 +69,18 @@ class Particle {
         this.position.color = color;
     }
 
+    /**
+     * @notice Helper method to get a random FLOAT between two passed value 
+     */
     getRandom(min, max) {
         return (min + Math.random()*(max - min + 1))
     }
 
     move() {
-
-        // has it hit left wall
+        // has it hit left wall?
         if(this.position.position.x - this.radius <= 10) {
             this.xVector = this.moveIncrement;
-        }// has it hit right wall
+        }// has it hit right wall?
         else if(this.position.position.x + this.radius >= (window.innerWidth-10)) {
             this.xVector = -this.moveIncrement;
         }

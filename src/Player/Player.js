@@ -30,7 +30,7 @@ class Player {
         this.colors = ['#8F0380', '#EC205B', '#FC7208', '#D00204', '#7701AD'];
         this.maxParticles = 5;
         this.performerRadius = 50;
-        this.numPerformers = 5;
+        this.numPerformers = 3;
         
         // no, this not bad OOP, it's just the easiest way to manage things. 
         // both particles and performers are both at the same level as we need an 
@@ -177,6 +177,10 @@ class Player {
     resize() {
         this.width =  window.innerWidth;
         this.height =  window.innerHeight;
+        this.ctx.canvas.width = this.width;
+        this.ctx.canvas.height = this.height;
+        // todo remove old walls
+        this.setupWalls();
         // todo check if resize moved performers off screen
     }
 
@@ -192,11 +196,12 @@ class Player {
             this.conductor.play();
         }
         else {
-            this.conductor.pause()
+            this.conductor.pause();
         }
 
         this.ctx.fillStyle = this.bgColor;
         this.ctx.fillRect(0, 0, this.width, this.height);
+
         for(let i=0; i<this.numPerformers; i++) {
             this.performers[i].draw();
         }
