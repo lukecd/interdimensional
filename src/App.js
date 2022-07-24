@@ -11,13 +11,15 @@ import Canvas from "./Player/Canvas";
 
 const App = () => {
     const [playing, setPlaying] = useState(false);
+
     return (
-        <div name='top' className='w-full h-view top-0'>
+        <div name='top' className='w-full h-view  min-h-screen top-0 bg-background'>
             <Canvas className='fixed'
                     height={window.innerHeight} 
                     width={window.innerWidth}
-                    playing={playing} />
-            <div className='absolute w-full h-full z-1 top-0'>
+                    playing={playing} 
+                    />
+            <div className='absolute w-full z-1 top-0 bg-background'>
                 <Navbar className='bg-black z-3' setPlaying={setPlaying}/>
                 <Routes>
                     <Route path="/" element={<Stage />} />

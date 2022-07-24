@@ -27,6 +27,7 @@ const Mixer = () => {
     if (allNFTs) {
       console.log("allNFTs ", allNFTs);
       setNFTs(allNFTs);
+      window.$PERFORMING_NFTs = allNFTs;
     }
   }, []);
 

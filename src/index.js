@@ -47,6 +47,7 @@ const { chains, provider } = configureChains(
 // focus on the music now.
 window.$music_playing = false;
 window.$CONTRACT_ADDRESS = "0x13e6fe997310D4e96e893301301e1e1793B130EB";
+window.$PERFORMING_NFTs = [];
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

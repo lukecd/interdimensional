@@ -69,7 +69,8 @@ const Mint = () => {
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>2. Pick An Instrument</h1>
             <div className='pt-3'>
-            <input className='' type="radio" name="instrument" value="Pad" onChange={(e) => {setPerformerType('pad'); setPerformerInstrument('pad-canyon');}}/><span className='bg-secondary ml-1 mr-5'>Deep Canyon Pad</span>
+            <input className='' type="radio" name="instrument" value="drone" onChange={(e) => {setPerformerType('drone'); setPerformerInstrument('drone-inside');}}/><span className='bg-secondary ml-1 mr-5'>Drone Inside</span>
+            <input className='' type="radio" name="instrument" value="pad" onChange={(e) => {setPerformerType('pad'); setPerformerInstrument('pad-canyon');}}/><span className='bg-secondary ml-1 mr-5'>Deep Canyon Pad</span>
             <input className='' type="radio" name="instrument" value="rhythm1" onChange={(e) => {setPerformerType('rhythm'); setPerformerInstrument('mallet-marimba');}}/><span className='bg-secondary ml-1 mr-5'>Marimba</span>
             <input className='' type="radio" name="instrument" value="rhythm2" onChange={(e) => {setPerformerType('rhythm'); setPerformerInstrument('mallet-mellow');}}/><span className='bg-secondary ml-1 mr-5'>Mellow Mallets</span>
             </div>
