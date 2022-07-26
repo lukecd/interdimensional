@@ -31,10 +31,7 @@ const PerformerViewer = (props) => {
     if (curNFT) {
       const beginning = "data:application/json;base64,";
       let decode = curNFT.substring(beginning.length)
-
-
       decode = atob(decode);
-      console.log("decode ", decode);
       let nftOBJ = JSON.parse(decode);
       setImgURL(nftOBJ.image);
       setPerformerType(nftOBJ.performerType);

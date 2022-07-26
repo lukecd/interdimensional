@@ -1,5 +1,5 @@
 import Matter from 'matter-js';
-import Particle from './Particle.js';
+import Particle from '../Particle.js';
 import chroma from "chroma-js";
 
 class Performer {

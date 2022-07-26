@@ -1,8 +1,22 @@
-import Performer from './Performer.js';
+
 import Matter from 'matter-js';
 import Particle from './Particle.js';
 import chroma from "chroma-js";
+
 import Conductor from './Conductor.js';
+
+import DroneSource from './SoundSource/SoundSource.js';
+import PadSource from './SoundSource/PadSource.js';
+import RhythmSource from './SoundSource/RhythmSource.js';
+
+import Performer from './Performer/Performer.js';
+import DronePerformer from './Performer/DronePerformer.js';
+import PadPerformer from './Performer/PadPerformer.js';
+import RhythmPerformer from './Performer/RhythmPerformer.js';
+import WaveRenderer from './Renderer/WaveRenderer.js';
+import BlackHoleRenderer from './Renderer/BlackHoleRenderer.js';
+
+
 
 /**
  * Ok, honestly this seem a bit kludgy to have this one draw method 
@@ -14,58 +28,88 @@ import Conductor from './Conductor.js';
  * @param {*} canvas A reference to the site's canvas
  */
 
- const draw = (ctx, canvas, engine) => {
-    new Player(ctx, canvas, engine);
+ const draw = (ctx, canvas, engine, signer) => {
+    new Player(ctx, canvas, engine, signer);
 }
 export default draw;
 
-
+/**
+ * Handles the physics of our world and also coordination between SoundSources and Performers
+ */
 class Player {
-    constructor(ctx, canvas, engine) {
+    constructor(ctx, canvas, engine, signer) {
         this.ctx = ctx;
         this.canvas = canvas;
         this.engine = engine;
+        this.performerRadius = 50;
 
         this.bgColor = '#12082D';
         this.colors = ['#8F0380', '#EC205B', '#FC7208', '#D00204', '#7701AD'];
-        this.maxParticles = 5;
-        this.performerRadius = 50;
-        this.numPerformers = 3;
-        
-        // no, this not bad OOP, it's just the easiest way to manage things. 
-        // both particles and performers are both at the same level as we need an 
-        // easy way to handle merging particles made by different performers. 
-        // if particles were a child class of performers, it would be tricky to handle
-        // cross-performer merges.
-        this.particles = [];
-        let performers = [];
-        for(let i=0; i<this.colors.length; i++) {
-            // random, but giving room so we don't go off screen
-            let x = Math.random()* (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
-            let y = Math.random()* (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
-            performers[i] = new Performer(x, 
-                                      y,
-                                      this.performerRadius,
-                                      //this.colors[Math.floor(Math.random() * this.numPerformers)],
-                                      this.colors[i],
-                                      this.ctx,
-                                      this.engine);
-        }
-        this.performers = performers;
+        this.colorsRGBA = ['rgba(143, 3, 128, 1)', 'rgba(236, 32, 91, 0.9)', 'rgba(252, 114, 8, 0.9)', 'rgba(208, 2, 4, 0.5)', 'rgba(119, 1, 173, 0.5)']
 
-        this.conductor = new Conductor(this, this.performers, this.particles);
+        this.points = [];
 
-        this.setupWalls();
 
-        this.cDetector = Matter.Detector.create();
+        //this.setupWalls();
 
         // handle collisions
-        this.setupEvents();
+        //this.setupEvents();
 
         // handle resizing
         window.addEventListener('resize', this.resize.bind(this), false);
         this.resize();
         requestAnimationFrame(this.animate.bind(this));
+        this.signer = signer;
+        this.performers = [];
+        this.soundSources = [];
+        this.particles = [];
+        //this.conductor = new Conductor();
+        this.renderer = new BlackHoleRenderer(0, 0, this.width, this.height, this.bgColor, this.colors, this.engine);
+        //this.setupFromNFTs();
+    }
+
+    setupFromNFTs() {
+        // not the best state mgmt, need to figure out better way
+        // assign to a local variable first to make it easier to change later
+        const stateNFTs = window.$PERFORMING_NFTs;
+        console.log('stateNFTs', window.$PERFORMING_NFTs)
+        for(let i=0; i<stateNFTs.length; i++) {
+            const nftType = stateNFTs[i].performerType;
+            console.log('nftType', nftType)
+            const performerInstrument = stateNFTs[i].performerInstrument;
+            const performerData = stateNFTs[i].performerData;
+            const primaryColor = stateNFTs[i].primaryColor;
+
+            const x = Math.random() * (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
+            const y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
+
+            let soundSource;
+            let performer;
+            if(nftType === 'drone') {
+                soundSource = new DroneSource(this);
+                performer = new DronePerformer(x, 
+                                               y,
+                                               this.performerRadius,
+                                               primaryColor,
+                                               this.ctx,
+                                               this.engine);
+            }
+            else if(nftType === 'pad') {
+                soundSource = new PadSource(this, performerInstrument);
+                performer = new PadPerformer();
+            }
+            else if(nftType === 'rhythm') {
+                soundSource = new RhythmSource(this, performerInstrument, performerData);
+                performer = new RhythmPerformer();
+            }
+            if(performer && soundSource) {
+                this.performers.push(performer);
+                this.soundSources.push(soundSource);
+                this.conductor.registerActor(performer, soundSource);
+            }
+        }
+
+        console.log(this.performers)
     }
 
     setupEvents() {
@@ -132,6 +176,8 @@ class Player {
                  }
              }
          });
+
+
     }
 
     /**
@@ -179,8 +225,22 @@ class Player {
         this.height =  window.innerHeight;
         this.ctx.canvas.width = this.width;
         this.ctx.canvas.height = this.height;
+
+        // intro screen
+        for(let i=0; i<this.colors.length; i++) {
+            const p = {
+                x: Math.random() * this.width,
+                y:  Math.random() * this.height,
+                vx: 0,
+                vy: 0,
+                color: this.colors[i]
+                };
+            this.points.push(p);
+        }
+
+
         // todo remove old walls
-        this.setupWalls();
+        //this.setupWalls();
         // todo check if resize moved performers off screen
     }
 
@@ -189,7 +249,9 @@ class Player {
     }
 
 
-    animate(t) {
+    animate2(t) {
+        if(!this.drone) this.setupFromNFTs();
+
         // this is kinda messy, probably slows stuff down with too many calls. 
         // TODO; reorganize
         if(window.$music_playing) {
@@ -219,4 +281,19 @@ class Player {
         }
         requestAnimationFrame(this.animate.bind(this));
     }
+
+    /**
+     * In animate, check if wallet is connected. If not, prompt to use in demo mode
+     */
+    animate(t) {
+        this.renderer.draw(this.ctx);
+        requestAnimationFrame(this.animate.bind(this));
+    }
+
+    getValue(x, y) {
+        return (x + y) * 0.001 * Math.PI * 2;
+        return (Math.sin(x * 0.01) + Math.sin(y * 0.0001)) * Math.PI * 2;
+    }
+
+
 }

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import draw from "./Player.js";
 import Matter from 'matter-js';
+import { useSigner } from "wagmi";
 
 /**
  * 
@@ -12,6 +13,7 @@ const Canvas = (props) => {
   const canvas = React.useRef();
   let ctx = null;
   let engine = null;
+  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
 
   React.useEffect(() => {
     console.log('created engine')
@@ -28,17 +30,7 @@ const Canvas = (props) => {
 
       ctx = canvas.current.getContext("2d");
 
-      // const handleResize = e => {
-      //   ctx.canvas.height = window.innerHeight;
-      //   ctx.canvas.width = window.innerWidth;
-      // };
-  
-      // handleResize();
-      // window.addEventListener("resize", handleResize);
-  
-      // return () => window.removeEventListener("resize", handleResize);
-
-      draw(ctx, canvas, engine);
+      draw(ctx, canvas, engine, signer);
       Matter.Runner.run(engine);
   }, []);
   
