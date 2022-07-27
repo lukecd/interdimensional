@@ -9,19 +9,12 @@ class PadSource extends SoundSource {
         super.setType('pad');
     }
 
-    init(scaleNotes) {
-        this.chords = [];
-
-        for(let i=0; i < scaleNotes.length; i++) {
-            let chord = [];
-            chord[0] = this.getMidNote(i, scaleNotes);
-            chord[1] = this.getMidNote(i+2, scaleNotes);
-            chord[2] = this.getMidNote(i+4, scaleNotes);
-            chord[3] = this.getMidNote(i+6, scaleNotes);
-            this.chords.push(chord);
-        }
+    init(scaleNotes, chords) {
+        this.chords = chords;
+        this.nextChord = 0;
+        
         //todo: build big ass if to load different instruments based on performerInstrument
-        const sampler = new Tone.Sampler({
+        this.sampler = new Tone.Sampler({
             urls: {
                 C3: "pad-e-canyon-C3.mp3",
                 D3: "pad-e-canyon-D3.mp3",
@@ -42,9 +35,8 @@ class PadSource extends SoundSource {
         //sampler => delay => verb => destination
         verb.toDestination();
         delay.connect(verb);
-        sampler.connect(delay)
-        sampler.volume.value = -10;
-        return sampler;
+        this.sampler.connect(delay)
+        this.sampler.volume.value = -10;
     }
 
      /**
@@ -54,11 +46,11 @@ class PadSource extends SoundSource {
         this.currentChord = this.nextChord;
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
-        
+        console.log('this.currentChord ', this.currentChord);
         // callback to cause the player to emit a Particle from the Pad Performer
         //this.player.emit(0);
 
-        this.pad.triggerAttackRelease(this.chords[this.currentChord], duration, time);
+        this.sampler.triggerAttackRelease(this.chords[this.currentChord], duration, time);
         this.nextChord = Math.floor(Math.random() * this.chords.length);
         Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);
     }   
@@ -67,6 +59,7 @@ class PadSource extends SoundSource {
      * @notice Starts Pad playing
      */
     play() {
+        console.log("PadSource play")
         Tone.Transport.schedule(this.evolvePad.bind(this), "1");
     }
 

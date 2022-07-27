@@ -27,11 +27,19 @@ const Canvas = (props) => {
       engine.frictionStatic = 0;
       engine.inertia = Infinity;
       engine.restitution = 1;
+      Matter.Runner.run(engine);
 
       ctx = canvas.current.getContext("2d");
 
+      const mMouse = Matter.Mouse.create(ctx.canvas);
+      let options = {
+        mouse: mMouse
+      }
+      const mConstraint = Matter.MouseConstraint.create(engine, options);
+      Matter.Composite.add(engine.world, mConstraint);
+
       draw(ctx, canvas, engine, signer);
-      Matter.Runner.run(engine);
+
   }, []);
   
 

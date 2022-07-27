@@ -70,23 +70,6 @@ class RhythmSource extends SoundSource {
     pause() {
 
     }
-
-    /**
-    * @notice Helper method to generate euclidean rhythms using the Bresenham Line method
-    * Based on code in https://medium.com/code-music-noise/euclidean-rhythms-391d879494df
-    * Returns an array representing a binary sequence. Play on a 1, rest on a 0.
-    */
-    bresenhamEuclidean(onsets, totalPulses) {
-        let previous = null;
-        let pattern = [];
-
-        for (let i = 0; i < totalPulses; i++) {
-            var xVal = Math.floor((onsets  / totalPulses) * i);
-            pattern.push(xVal === previous ? 0 : 1);
-            previous = xVal;
-        }
-        return pattern;
-    }
     
     /**
      * @notice Helper function to shift a binary sequence representing a rhythm a total of numShifts shifts

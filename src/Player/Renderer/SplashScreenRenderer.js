@@ -1,17 +1,23 @@
 import Renderer from "./Renderer";
 import Matter from 'matter-js';
+import * as Tone from "tone"
+/**
+ * Renders the opening splash screen.
+ * Gives user option to launch in Demo mode or NFT mode.
+ */
+class SplashScreenRenderer extends Renderer {
 
-class BlackHoleRenderer extends Renderer {
-
-    constructor(x, y, width, height, bgColor, colors, engine) {
+    constructor(x, y, width, height, bgColor, colors, engine, player) {
         super(x, y, width, height);
         this.colors = colors;
         this.engine = engine;
+        this.player = player;
         this.maxDots = 3000;
         this.numDots = 0;
         this.centerButtonRadius = 100;
         this.mouseX = 0;
         this.mouseY = 0;
+        this.globalAlpha = 1;
 
         // so i'm hosting this font locally, not sure it's the best way
         // TODO: figure it out
@@ -98,6 +104,8 @@ class BlackHoleRenderer extends Renderer {
 
     launchDemoMode() {
         this.engine.gravity.y = 0.1;
+        super.setFadeOut(true);
+        Tone.Transport.start();
     }
 
     launchWalletMode() {
@@ -162,16 +170,23 @@ class BlackHoleRenderer extends Renderer {
                 (this.mouseY < 60) &&
                 (this.mouseY > 31)) {
                 ctx.fillStyle = this.colors[1];
-                const width = ctx.measureText("Wallet Mode");
-                ctx.fillRect(0-this.centerButtonRadius+48, 60-15, width.width+5, 17);
+                const width = ctx.measureText("NFT Mode");
+                ctx.fillRect(0-this.centerButtonRadius+54, 60-15, width.width+5, 17);
 
         }
         ctx.fillStyle = '#FFFFFF';
         ctx.fillText("Demo Mode", 0-this.centerButtonRadius+50, 30);
-        ctx.fillText("Wallet Mode", 0-this.centerButtonRadius+50, 60);
+        ctx.fillText("NFT Mode", 0-this.centerButtonRadius+55, 60);
         ctx.restore();
-        //console.log("x, y"+this.mouseX+", "+this.mouseY)
-        //var width = ctx.measureText("text")
+        
+        if(super.getFadeOut()) {
+            ctx.globalAlpha = this.globalAlpha;
+            this.globalAlpha -= 0.009;
+            if(this.globalAlpha <= 0) {
+                this.player.launchApp(true);
+                this.engine.gravity.y = 0.0;
+            }
+        }
     }
 
     // Standard Normal variate using Box-Muller transform.
@@ -193,10 +208,4 @@ class BlackHoleRenderer extends Renderer {
     }
 }
 
-class BlackHoleParticle {
-    constructor(x, y) {
-
-    }
-}
-
-export default BlackHoleRenderer;
+export default SplashScreenRenderer;

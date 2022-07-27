@@ -19,6 +19,14 @@ class Renderer {
         this.fadeOut = true;
     }
 
+    getFadeIn() {
+        return this.fadeIn;
+    }
+
+    getFadeOut() {
+        return this.fadeOut;
+    }
+
     draw(ctx) {
         
     }

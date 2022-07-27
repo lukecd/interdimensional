@@ -6,18 +6,17 @@ class WaveRenderer extends Renderer {
     constructor(x, y, width, height, colors) {
         super(x, y, width, height);
         this.waveGroup = new WaveGroup(colors);
-        window.addEventListener('resize', this.resize.bind(this), false);
+        // window.addEventListener('resize', this.resize.bind(this), false);
         this.resize();
     }
 
     resize() {
-        this.width =  window.innerWidth;
-        this.height =  window.innerHeight;
         this.waveGroup.resize(this.width, this.height);
     }
 
     draw(ctx) {
         ctx.clearRect(0, 0, this.width, this.height);
+
         this.waveGroup.draw(ctx);
     }
 }
@@ -34,7 +33,7 @@ class Point {
         this.fixedY = y;
         this.speed = 0.005;
         this.cur = index;
-        this.max = Math.random() * 100 + 550;
+        this.max = 50; //Math.random() * 100 + 550; 
         this.waveSpeed = 0.005;
     }
 
@@ -55,6 +54,7 @@ class Wave {
         this.totalPoints = totalPoints;
         this.color = color;
         this.points = [];
+        this.resize();
     }
 
     resize(width, height) {
@@ -62,7 +62,7 @@ class Wave {
         this.height = height;
         this.centerX = width / 2;
         this.centerY = height / 2;
-        // how much to space out points along the sine durve  
+        // how much to space out points along the sine curve  
         this.pointGap = this.width / (this.totalPoints - 1);
         
         this.init();
@@ -70,9 +70,7 @@ class Wave {
 
     init() {
         this.points = [];
-
         for(let i=0; i<this.totalPoints; i++) {
-
             const point = new Point(this.index+i, this.pointGap * i, this.centerY); 
             this.points[i] = point;
         }
@@ -96,12 +94,12 @@ class Wave {
 
             prevX = this.points[i].x;
             prevY = this.points[i].y;
-
         }
 
         context.lineTo(prevX, prevY);
         context.lineTo(this.width, this.height);
         context.lineTo(this.points[0].x, this.height);
+
         context.fill();
         context.closePath();
     }
@@ -114,7 +112,7 @@ class Wave {
  */
 class WaveGroup {
     constructor(colors) {
-        this.totalWaves = 3;
+        this.totalWaves = 1;
         this.totalPoints = 6;
         
         this.colors = colors;

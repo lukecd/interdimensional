@@ -27,6 +27,7 @@ class SoundSource {
     }
 
     setType(type) {
+        console.log("type set", type)
         this.type = type;
     }
 

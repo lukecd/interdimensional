@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Interdimensional One: A Portal To Stillness
 
 Soon enough this will be a generative music player
 
