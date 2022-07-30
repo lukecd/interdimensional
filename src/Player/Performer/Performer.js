@@ -13,6 +13,11 @@ class Performer {
         this.type = type;
         this.soundSource = soundSource;
         this.shouldAnimate = false;
+
+        // maintain the two way relationship between Performer and SoundSource
+        this.soundSource.setPerformer(this);
+
+        // create our position and add to matter.js
         this.position = Matter.Bodies.circle(x, y, radius, {
             isStatic: false,
             label: 'emitter'        

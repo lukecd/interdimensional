@@ -12,7 +12,7 @@ class Particle {
     //     collisionFilter: { group: -1 } // no collision to other balls
     //   };
 
-    constructor(x, y, radius, color, ctx, engine) {
+    constructor(x, y, radius, color, engine) {
         this.x = x;
         this.y = y;
         this.vx = 0.0;
@@ -32,13 +32,11 @@ class Particle {
         rndSeed = Math.floor(this.getRandom(1,10));
         if(rndSeed > 5) this.yVector = this.moveIncrement;
         else this.yVector = -this.moveIncrement;
-
         this.color = color;
         this.colorAlpha = 1;
         this.fadeAway = false;
         this.isRetired = false;
 
-        this.ctx = ctx;
         this.engine = engine;
         this.position = Matter.Bodies.circle(x, y, radius, {
           mass: 0.005,
@@ -96,7 +94,7 @@ class Particle {
         this.position.position.y += this.yVector;
     }
 
-    draw() {
+    draw(ctx) {
         // set the retired flag so we're eventually removed from the mater array
         if(this.colorAlpha <= 0.0) {
             this.isRetired = true;
@@ -108,10 +106,10 @@ class Particle {
             const colorR = chromaColor[0];
             const colorG = chromaColor[1];
             const colorB = chromaColor[2];
-            this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-            this.ctx.fillStyle = 'rgba(colorR, colorG, colorB, this.colorAlpha)';
-            this.ctx.fill();
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(colorR, colorG, colorB, this.colorAlpha)';
+            ctx.fill();
             this.colorAlpha -= 0.01;
             this.radius -= 0.1;
         }
@@ -121,10 +119,10 @@ class Particle {
             this.x = this.position.position.x;
             this.y = this.position.position.y;
             
-            this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-            this.ctx.fillStyle = this.color;
-            this.ctx.fill();
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            ctx.fillStyle = this.color;
+            ctx.fill();
         }
 
     }

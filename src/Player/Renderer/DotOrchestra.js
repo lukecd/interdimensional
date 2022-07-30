@@ -29,12 +29,12 @@ class DotOrchestra extends Renderer {
 
         this.resize();
         this.setupWalls();
-
+        this.setupEvents();
 
         this.performers  = [];
         this.particles = [];
         this.soundSources = [];
-        this.conductor = new Conductor(this, this.performers, this.particles);
+        this.conductor = new Conductor(this, this.performers, this.particles, this.engine);
 
         if(demoMode) this.setupDemo();
         else this.setupFromNFTs();
@@ -48,23 +48,22 @@ class DotOrchestra extends Renderer {
         let y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
 
         // drone first
-        let droneSoundSource = new DroneSource(this);
+        let droneSoundSource = new DroneSource(this, this.conductor);
         let dronePerformer = new DronePerformer(x, 
                                                 y,
                                                 this.performerRadius,
+                                                this.bgColor,
                                                 this.colors[0],
                                                 this.ctx,
                                                 this.engine,
                                                 droneSoundSource);
-        console.log('dronePerformer ', dronePerformer);                                       
         this.performers.push(dronePerformer);
         this.conductor.registerActor(dronePerformer);   
 
         x = Math.random() * (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
         y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
         // pad next
-        let padSoundSource = new PadSource(this);
-        console.log('droneSoundSource ', droneSoundSource);
+        let padSoundSource = new PadSource(this, this.conductor, 'pad-canyon');
         let padPerformer = new PadPerformer(x, 
                                             y,
                                             this.performerRadius,
@@ -74,7 +73,29 @@ class DotOrchestra extends Renderer {
                                             padSoundSource);
         console.log('padPerformer ', padPerformer);                                       
         this.performers.push(padPerformer);
-        this.conductor.registerActor(padPerformer);          
+        this.conductor.registerActor(padPerformer);     
+        
+        let rhythmSource1 = new RhythmSource(this, this.conductor, 'mallet-marimba');
+        let rhythmPerformer1 = new RhythmPerformer(x, 
+                                                   y,
+                                                   this.performerRadius,
+                                                   this.colors[2],
+                                                   this.ctx,
+                                                   this.engine,
+                                                   rhythmSource1);   
+        this.performers.push(rhythmPerformer1);
+        this.conductor.registerActor(rhythmPerformer1); 
+
+        let rhythmSource2 = new RhythmSource(this, this.conductor, 'mallet-mellow');
+        let rhythmPerformer2 = new RhythmPerformer(x, 
+                                                   y,
+                                                   this.performerRadius,
+                                                   this.colors[3],
+                                                   this.ctx,
+                                                   this.engine,
+                                                   rhythmSource2);   
+        this.performers.push(rhythmPerformer2);
+        this.conductor.registerActor(rhythmPerformer2);         
     }
 
     setupFromNFTs() {
@@ -220,16 +241,6 @@ class DotOrchestra extends Renderer {
             Matter.Bodies.rectangle(0, height/2, thickness, height, wallOptions) // left
         ]);
       
-    }
-
-    emit(performerId) {
-        this.performers[performerId].emit();
-        this.particles.push(new Particle(this.performers[performerId].x, 
-            this.performers[performerId].y, 
-            this.performers[performerId].radius / 2, 
-            this.performers[performerId].color,
-            this.ctx,
-            this.engine));
     }
 
     resize() {

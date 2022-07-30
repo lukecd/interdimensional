@@ -9,20 +9,23 @@ import * as Tonal from "@tonaljs/tonal";
  */
 class Conductor {
     
-    constructor(renderer, performers, particles) {
+    constructor(renderer, performers, particles, engine) {
         this.renderer = renderer;
         this.performers = [];
+        this.particles = particles;
+        this.engine = engine;
+        this.particleRadius = 20;
 
-
-        
-        this.currentChord = 0;
-        this.nextChord = 0;
-        
         // init audio
         this.initAudio();
 
-        this.scaleNotes = Tonal.Scale.get("C3 major").notes;
+        this.currentChord = 0;
+        this.nextChord = 0;
+        this.scaleNotes = Tonal.Scale.get("C2 major").notes;
+        this.chords = this.getChordsForNote(this.scaleNotes);
+        this.currentChordId = 0;
 
+        // References to our Performer Objects
         this.drone = null;
         this.pad = null;
         this.rhythm1 = null;
@@ -37,7 +40,8 @@ class Conductor {
      * I plan to expand this so that if multiple pads exist, the conductor cross fades between them
      */
     registerActor(newPerformer) {
-        const rhythm = this.bresenhamEuclidean(7, 16); // todo deal with this
+        //const rhythm = this.bresenhamEuclidean(7, 16); // todo deal with this
+        const rhythm = this.bresenhamEuclidean(7,22); // todo deal with this
 
         if(newPerformer.getType() === 'drone') {
             this.drone = newPerformer;
@@ -45,16 +49,16 @@ class Conductor {
         }
         else if(newPerformer.getType() === 'pad') {
             this.pad = newPerformer;
-            this.pad.init(this.scaleNotes, this.getChordsForNote(this.scaleNotes))
+            this.pad.init(this.scaleNotes);
         }
         else if(newPerformer.getType() === 'rhythm') {
             if(this.rhythm1 == null) {
                 this.rhythm1 = newPerformer;
-                this.rhythm1.init(this.scaleNotes, rhythm)
+                this.rhythm1.init(this.scaleNotes, rhythm);
             }
             else if(this.rhythm2 == null) {
                 this.rhythm2 = newPerformer;
-                this.rhythm2.init(this.scaleNotes, rhythm)
+                this.rhythm2.init(this.scaleNotes, this.shiftRhythm(rhythm, 3));
             }
         }
         this.performers.push(newPerformer);
@@ -124,9 +128,6 @@ class Conductor {
         Tone.Transport.bpm.value = 70;
     }
 
-
-      
-
     play() {
         if(this.isPlaying) return;
         this.isPlaying = true;
@@ -134,11 +135,8 @@ class Conductor {
         console.log("play called ", this.drone)
         if(this.drone) this.drone.play();
         if(this.pad) this.pad.play();
-
-        // for some reason I need to make a random call before really starting things
-        // ideally i could delete this next line
-        //this.pad.triggerAttackRelease(this.chords[this.currentChord], '1m');
-
+        if(this.rhythm1) this.rhythm1.play();
+        if(this.rhythm2) this.rhythm2.play();
        
         Tone.Transport.start();
     }
@@ -148,6 +146,42 @@ class Conductor {
         Tone.Transport.pause();
         if(this.drone) this.drone.pause();
         if(this.pad) this.pad.pause();
+        if(this.rhythm1) this.rhythm1.pause();
+        if(this.rhythm2) this.rhythm2.pause();
+    }
+
+    /**
+     * @notice Callback method used to a Performer can notify the Conductor a note was just played
+     * and the Conductor can go ahead and create some visuals (if desired). This allows us to maintain
+     * the pattern of 1 algorithm producing both audio and visuals.
+     * @param {*} performer The performer who just played
+     */
+    notePlayed(soundSource) {
+        if(soundSource.getType() === 'drone') {
+
+            
+        }
+        else if(soundSource.getType() === 'pad') {
+            this.particles.push(new Particle(soundSource.getPerformer().x, soundSource.getPerformer().y, 
+                                            this.particleRadius, soundSource.performer.color, this.engine));
+        }
+        else if(soundSource.getType() === 'rhythm') {
+            this.particles.push(new Particle(soundSource.getPerformer().x, soundSource.getPerformer().y, 
+                                            this.particleRadius, soundSource.performer.color, this.engine));        
+        }
+    }
+
+    /**
+     * @notice Returns the current chord being played by the pad.
+     *         Also used by the pad to determine the next chord to play.
+     */
+    getCurrentChord() {
+        return this.chords[this.currentChordId];
+    }
+
+    getNewChord() {
+        this.currentChordId = Math.floor(Math.random() * this.chords.length);
+        return this.chords[this.currentChordId];
     }
 }
 

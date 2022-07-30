@@ -30,7 +30,6 @@ class SplashScreenRenderer extends Renderer {
         });
 
         const allBodies = Matter.Composite.allBodies(this.engine.world)
-        console.log('allBodies ', allBodies)
 
         window.addEventListener('resize', this.resize.bind(this), false);
         this.resize();
@@ -76,7 +75,6 @@ class SplashScreenRenderer extends Renderer {
                 (self.mouseX < self.centerButtonRadius) &&
                 (self.mouseY < 30) &&
                 (self.mouseY > -5)) {
-                    
                 self.launchDemoMode();
             }
             else if((self.mouseX > 0-self.centerButtonRadius+50) &&
@@ -84,9 +82,7 @@ class SplashScreenRenderer extends Renderer {
                     (self.mouseY < 60) &&
                     (self.mouseY > 31)) {
                 self.launchWalletMode();
-    
             }
-            
         }, false)
     }
 

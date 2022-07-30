@@ -1,34 +1,38 @@
 import Performer from "./Performer";
+import BlackHoleRenderer from "../Renderer/BlackHoleRenderer.js";
 
 class DronePerformer extends Performer {
 
-    constructor(x, y, radius, color, ctx, engine, droneSoundSource) {
+    constructor(x, y, radius, bgColor, color, ctx, engine, droneSoundSource) {
         super(x, y, radius, color, ctx, engine, 'drone', droneSoundSource);
         this.frameCounter = 0;
+        this.renderer = new BlackHoleRenderer(x-radius, y-radius, radius*2, radius*2, bgColor, this.color, ctx);
+//        this.renderer = new BlackHoleRenderer(x, y, radius, radius, this.color);
     }
 
     draw(ctx) {        
         this.x = this.position.position.x;
         this.y = this.position.position.y;
 
-        if(this.shouldAnimate) {
-          this.frameCounter++;
-          const circleCount = this.colorScale.length;
-          let startRadius = this.radius;
-          for(let i=0; i<circleCount; i++) {
-    
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, startRadius, 0, 2 * Math.PI);
-            ctx.fillStyle = this.colorScale[i];
-            ctx.fill();           
-            startRadius -= (this.radius / circleCount);
-          }
-          // shift the colors every 9 renders (so people have time to see)
-          if(this.frameCounter % 9 == 0) {
-            const colorToMove = this.colorScale.shift();
-            this.colorScale.push(colorToMove);
-          }
+        // TEMP FOR TESTING
+        this.shouldAnimate = true;
 
+        if(this.shouldAnimate) {
+          ctx.save();
+          ctx.translate(this.x-this.radius, this.y-this.radius); 
+          ctx.beginPath();
+          ctx.arc(0+this.radius, 0+this.radius, this.radius, 0, 2 * Math.PI);
+          ctx.clip();
+          this.renderer.draw(ctx);
+          ctx.fillStyle = this.color;
+
+          ctx.beginPath();
+          ctx.strokeStyle = this.color;  
+          ctx.lineWidth = 10;
+          ctx.arc(0+this.radius, 0+this.radius, this.radius, 0, 2 * Math.PI);
+          ctx.stroke();
+
+          ctx.restore();
         }
         else {
           ctx.beginPath();

@@ -3,10 +3,9 @@ import * as Tonal from "@tonaljs/tonal";
 import SoundSource from "./SoundSource";
 
 class RhythmSource extends SoundSource {
-    constructor(player, performerInstrument, performerData) {
-        super(player);
+    constructor(player, conductor, performerInstrument) {
+        super(player, conductor);
         this.performerInstrument = performerInstrument;
-        this.performerData = performerData;
         super.setType('rhythm');
     }
 
@@ -19,10 +18,8 @@ class RhythmSource extends SoundSource {
         const autoPanner = new Tone.AutoPanner("4n").toDestination().start();
         const delay = new Tone.FeedbackDelay('8n.', 0.5).toDestination();
 
-
-        let sampler; 
         if(this.performerInstrument === 'mallet-marimba') {
-            sampler = new Tone.Sampler({
+            this.sampler = new Tone.Sampler({
                 urls: {
                     C3: "mallet-marimba-C3.mp3",
                     D3: "mallet-marimba-D3.mp3",
@@ -38,9 +35,10 @@ class RhythmSource extends SoundSource {
                     release: 2
                 }
             });
+ 
         }
         else if(this.performerInstrument === 'mallet-mellow') {
-            sampler = new Tone.Sampler({
+            this.sampler = new Tone.Sampler({
                 urls: {
                     C3: "mallet-mellow-C3.mp3",
                     D3: "mallet-mellow-D3.mp3",
@@ -57,19 +55,27 @@ class RhythmSource extends SoundSource {
                 }
             });
         }
-        sampler.connect(delay);
-        delay.connect(autoPanner);
+        // this.sampler.connect(delay);
+        // delay.connect(autoPanner);
         //sampler.volume.value = -10;
+
+        var filter = new Tone.Filter(1200, "lowpass");
+        var vol = new Tone.Volume();
+
+        // Example of LFO for lowpass filter.
+        var lfo = new Tone.LFO(4, 200, 1200); // hertz, min, max
+        lfo.connect(filter.frequency);
+        lfo.start();
+
+        // Example of LFO for volume.
+        var lfo2 = new Tone.LFO(Math.random() * 0.01, -100, -9); // hertz, min, max
+        lfo2.connect(vol.volume);
+        lfo2.start();
+        this.sampler.chain(delay, autoPanner, filter, vol);
+        vol.toDestination();
     }
 
-    play() {
-        this.evolveMotif(this.motif1, [1, 2, 3, 4, 3, 2], this.rhythm, 1); //x = play, - = rest
-        //this.evolveMotif(this.motif2, [4, 3, 2, 1, 0], this.shiftRhythm(rhythm, 3), 2, '8n', '16n', 7); //1 = play, 0 = rest
-    }
 
-    pause() {
-
-    }
     
     /**
      * @notice Helper function to shift a binary sequence representing a rhythm a total of numShifts shifts
@@ -83,21 +89,35 @@ class RhythmSource extends SoundSource {
     }   
 
 
-    evolveMotif(motifSampler, motifArray, rhythmArray, performerIndex) {
+    evolveRhythm(sampler, motifArray, rhythmArray, performerIndex) {
         this.loop = new Tone.Loop((time) => {
-            let chordNotes = this.chords[this.currentChord];
+            //let chordNotes = this.chords[this.currentChord];
+            let chordNotes = this.conductor.getCurrentChord();
+            
             let noteIndex = motifArray.shift();
             motifArray.push(noteIndex);
-            let rhythm = rhythmArray.shift();
 
+            let rhythm = rhythmArray.shift();
             rhythmArray.push(rhythm);
+
             if(rhythm === 1) {
-                let note = this.getMidNote(noteIndex, chordNotes);
-                motifSampler.triggerAttackRelease(note, this.duration, time);
-                this.player.emit(performerIndex); // todo deal with these indexes
+                // TODO: I'm not sure about this logic. 
+                let note = this.conductor.getMidNote(noteIndex, chordNotes);
+                //console.log('sampler vol: ',sampler.volume.value);
+                this.sampler.triggerAttackRelease(note, this.duration, time);
+                Tone.Draw.schedule(this.conductor.notePlayed(this), this.duration)
             }
 
         }, this.tempo).start();
+    }
+
+    play() {
+        this.evolveRhythm(this.motif1, [1, 2, 3, 4, 3, 2], this.rhythm, 1); //x = play, - = rest
+        //this.evolveMotif(this.motif2, [4, 3, 2, 1, 0], this.shiftRhythm(rhythm, 3), 2, '8n', '16n', 7); //1 = play, 0 = rest
+    }
+
+    pause() {
+
     }
 
 }
