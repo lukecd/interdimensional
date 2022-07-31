@@ -27,18 +27,14 @@ class PadSource extends SoundSource {
                 release: 4
             }
         });
+        this.sampler.volume.value = -15;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.PingPongDelay("4n", 0.2);
-        //sampler => delay => verb => destination
-        // verb.toDestination();
-        // delay.connect(verb);
-        // this.sampler.connect(delay)
-        // this.sampler.volume.value = -10;
-
+      
         var vol = new Tone.Volume();
     
         // Example of LFO for volume.
-        var lfo2 = new Tone.LFO(0.01, -100, -20); // hertz, min, max
+        var lfo2 = new Tone.LFO(0.1, -100, -20); // hertz, min, max
         lfo2.connect(vol.volume);
         lfo2.start();
         this.sampler.chain(delay, verb, vol);
@@ -52,18 +48,18 @@ class PadSource extends SoundSource {
         this.currentChord = this.conductor.getNewChord();
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
-        console.log('time ', time)
-        console.log('this.currentChord ', this.currentChord);
-
+        // console.log('time ', time)
+        // console.log('this.currentChord ', this.currentChord);
+        console.log('evolve pad this.sampler.volume.value=', this.sampler.volume.value)
 
         this.sampler.triggerAttackRelease(this.currentChord, duration, time);
         //this.conductor.notePlayed(this);
         Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);
         Tone.Draw.schedule(this.conductor.notePlayed(this), '+' + duration);
-        const self = this;
-        Tone.Draw.schedule(function(){
-            self.conductor.notePlayed(self);
-        }, '+' + duration)
+        // const self = this;
+        // Tone.Draw.schedule(function(){
+        //     self.conductor.notePlayed(self);
+        // }, '+' + duration)
     }   
 
     /**

@@ -13,6 +13,7 @@ class Performer {
         this.type = type;
         this.soundSource = soundSource;
         this.shouldAnimate = false;
+        this.renderer = null;
 
         // maintain the two way relationship between Performer and SoundSource
         this.soundSource.setPerformer(this);
@@ -35,13 +36,6 @@ class Performer {
       return this.type;
     }
 
-    /**
-     * @notice Called when a new particle is being generated from our x,y
-     * lets us know we should animate.
-     */
-    emit() {
-    }
-
     updateColor(color) {
       this.color = color;
       this.position.color = color;
@@ -60,7 +54,10 @@ class Performer {
       this.soundSource.pause();
       this.shouldAnimate = false;
     }
- 
+    
+    getRenderer() {
+      return this.renderer;
+    }
 }
 
 export default Performer;

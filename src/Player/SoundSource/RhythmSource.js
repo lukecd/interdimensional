@@ -9,8 +9,7 @@ class RhythmSource extends SoundSource {
         super.setType('rhythm');
     }
 
-    init(scaleNotes, rhythm, tempo = '8n', duration = '8n', offset = 0) {
-        this.rhythm = rhythm; 
+    init(scaleNotes, tempo = '4n', duration = '8n', offset = 0) {
         this.tempo = tempo;
         this.duration = duration;
         this.offset = offset;
@@ -57,9 +56,9 @@ class RhythmSource extends SoundSource {
         }
         // this.sampler.connect(delay);
         // delay.connect(autoPanner);
-        //sampler.volume.value = -10;
+        this.sampler.volume.value = -5;
 
-        var filter = new Tone.Filter(1200, "lowpass");
+        var filter = new Tone.Filter(1200, "highpass");
         var vol = new Tone.Volume();
 
         // Example of LFO for lowpass filter.
@@ -74,45 +73,29 @@ class RhythmSource extends SoundSource {
         this.sampler.chain(delay, autoPanner, filter, vol);
         vol.toDestination();
     }
-
-
     
-    /**
-     * @notice Helper function to shift a binary sequence representing a rhythm a total of numShifts shifts
-     */
-    shiftRhythm(rhythm, numShifts) {
-        for(let i=0; i<numShifts; i++) {
-            const shiftee = rhythm.shift();
-            rhythm.push(shiftee);
-        }
-        return rhythm;
-    }   
 
-
-    evolveRhythm(sampler, motifArray, rhythmArray, performerIndex) {
+    playRhythm(sampler, motifArray, performerIndex) {
         this.loop = new Tone.Loop((time) => {
-            //let chordNotes = this.chords[this.currentChord];
             let chordNotes = this.conductor.getCurrentChord();
             
             let noteIndex = motifArray.shift();
             motifArray.push(noteIndex);
 
-            let rhythm = rhythmArray.shift();
-            rhythmArray.push(rhythm);
-
-            if(rhythm === 1) {
+            if(this.conductor.shouldPlay(this)) {
                 // TODO: I'm not sure about this logic. 
                 let note = this.conductor.getMidNote(noteIndex, chordNotes);
                 //console.log('sampler vol: ',sampler.volume.value);
                 this.sampler.triggerAttackRelease(note, this.duration, time);
-                Tone.Draw.schedule(this.conductor.notePlayed(this), this.duration)
+                Tone.Draw.schedule(this.conductor.notePlayed(this), time);
             }
 
         }, this.tempo).start();
+        this.loop.humanize = true;
     }
 
     play() {
-        this.evolveRhythm(this.motif1, [1, 2, 3, 4, 3, 2], this.rhythm, 1); //x = play, - = rest
+        this.playRhythm(this.motif1, [1, 2, 3, 4, 3, 2], 1); //x = play, - = rest
         //this.evolveMotif(this.motif2, [4, 3, 2, 1, 0], this.shiftRhythm(rhythm, 3), 2, '8n', '16n', 7); //1 = play, 0 = rest
     }
 

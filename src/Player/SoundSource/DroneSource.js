@@ -26,7 +26,6 @@ class DroneSource extends SoundSource {
         lfo2.connect(vol.volume);
         lfo2.start();
         
-        
         this.drone.chain(filter, vol);
         vol.toDestination();
         
