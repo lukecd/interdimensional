@@ -5,6 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 
 import React, { useState } from 'react';
+
 import {FaBars, FaTimes} from 'react-icons/fa';
 import { FiPlay, FiPause } from 'react-icons/fi';
 
@@ -19,10 +20,13 @@ const Navbar = (props) => {
     const handleClick = () => setNav(!nav);
 
     const playPause = () => {
-        setShowPlay(!showPlay);
-        window.$music_playing = !showPlay;
+        // so i'm struggling to maintain state between my base website and my JavaScript app
+        // right now some things are doubled up. 
+        // Hopefully someday I'll figure out a more elegant solution
+        props.setPlay(!props.play);
+        window.$music_playing = !props.play;
     }
-
+    
     return (
         <div className='fixed w-full h-[90px] flex justify-between items-center text-[#15274c]'>
             <div>
@@ -31,10 +35,10 @@ const Navbar = (props) => {
             {/* desktop menu */} 
             <ul className='hidden lg:flex justify-items-center items-center px:5 py:5'>
                 <li>
-                    {showPlay && (
+                    {window.$CONDUCTOR && props.play && (
                         <FiPause size={40} onClick={playPause} className='hover:bg-[#d31a83] hover:border-[#d31a83] w-[40px]'/>
                     )}
-                   {!showPlay && (
+                   {window.$CONDUCTOR && !props.play && (
                         <FiPlay size={40} onClick={playPause} className='hover:bg-[#d31a83] hover:border-[#d31a83] w-[40px]'/>
                     )}
                 </li>

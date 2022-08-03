@@ -15,6 +15,10 @@ import RhythmPerformer from '../Performer/RhythmPerformer.js';
 import WaveRenderer from '../Renderer/WaveRenderer.js';
 import Renderer from '../Renderer/Renderer.js';
 
+import { ethers } from "ethers";
+import contractABI from '../../abi/InterdimensionalOne.json';
+import * as Tone from "tone"
+
 class DotOrchestra extends Renderer {
 
     constructor(x, y, width, height, ctx, bgColor, colors, engine, demoMode) {
@@ -25,6 +29,7 @@ class DotOrchestra extends Renderer {
         this.engine = engine;
         this.globalAlpha = 1;
         this.demoMode = demoMode;
+
         this.performerRadius = 50;
 
         this.resize();
@@ -35,12 +40,12 @@ class DotOrchestra extends Renderer {
         this.particles = [];
         this.soundSources = [];
         this.conductor = new Conductor(this, this.performers, this.particles, this.engine);
+        window.$CONDUCTOR = this.conductor;
+
+console.log('setting window.$CONDUCTOR', window.$CONDUCTOR)
 
         if(demoMode) this.setupDemo();
         else this.setupFromNFTs();
-
-        this.conductor.play();
-        window.$music_playing = true;
     }
 
     setupDemo() {
@@ -95,51 +100,88 @@ class DotOrchestra extends Renderer {
                                                    this.engine,
                                                    rhythmSource2);   
         this.performers.push(rhythmPerformer2);
-        this.conductor.registerActor(rhythmPerformer2);         
+        this.conductor.registerActor(rhythmPerformer2);     
+        
+        this.conductor.play();
+        window.$music_playing = true;
     }
 
-    setupFromNFTs() {
+    async setupFromNFTs() {
+        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+        let accounts = await provider.send("eth_requestAccounts", []);
+        let account = accounts[0];
+        provider.on('accountsChanged', function (accounts) {
+            account = accounts[0];
+            console.log('new address:', address); // Print new address
+        });
+    
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log('DotOrchestra logged in address=', address);
+
+        const nftContract = new ethers.Contract(window.$CONTRACT_ADDRESS, contractABI, signer);
+        console.log("nftContract ", nftContract)
+        let curNFTs = [];
+        try{ curNFTs = await nftContract.getAllNFTs(); }
+        catch(error) {console.log("error when querying for allNFTs ", error)}
+        console.log("curNFTs ", curNFTs)
         // not the best state mgmt, need to figure out better way
         // assign to a local variable first to make it easier to change later
-        const stateNFTs = window.$PERFORMING_NFTs;
-        console.log('stateNFTs', window.$PERFORMING_NFTs)
-        for(let i=0; i<stateNFTs.length; i++) {
-            const nftType = stateNFTs[i].performerType;
+        console.log('curNFTs', window.$PERFORMING_NFTs)
+        for(let i=0; i<curNFTs.length; i++) {
+            const nftType = curNFTs[i].performerType;
             console.log('nftType', nftType)
-            const performerInstrument = stateNFTs[i].performerInstrument;
-            const performerData = stateNFTs[i].performerData;
-            const primaryColor = stateNFTs[i].primaryColor;
+            const performerInstrument = curNFTs[i].performerInstrument;
+            const performerData = curNFTs[i].performerData;
+            const primaryColor = curNFTs[i].primaryColor;
 
             const x = Math.random() * (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
             const y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
 
-            let soundSource;
-            let performer;
             if(nftType === 'drone') {
-                soundSource = new DroneSource(this);
-                performer = new DronePerformer(x, 
-                                               y,
-                                               this.performerRadius,
-                                               primaryColor,
-                                               this.ctx,
-                                               this.engine);
+                let droneSoundSource = new DroneSource(this, this.conductor);
+                let dronePerformer = new DronePerformer(x, 
+                                                        y,
+                                                        this.performerRadius,
+                                                        this.bgColor,
+                                                        primaryColor,
+                                                        this.ctx,
+                                                        this.engine,
+                                                        droneSoundSource);
+                this.performers.push(dronePerformer);
+                this.conductor.registerActor(dronePerformer);   
             }
             else if(nftType === 'pad') {
-                soundSource = new PadSource(this, performerInstrument);
-                performer = new PadPerformer();
+                let padSoundSource = new PadSource(this, this.conductor, performerInstrument);
+                let padPerformer = new PadPerformer(x, 
+                                                    y,
+                                                    this.performerRadius,
+                                                    primaryColor,
+                                                    this.ctx,
+                                                    this.engine,
+                                                    padSoundSource);
+                console.log('padPerformer ', padPerformer);                                       
+                this.performers.push(padPerformer);
+                this.conductor.registerActor(padPerformer);     
             }
             else if(nftType === 'rhythm') {
-                soundSource = new RhythmSource(this, performerInstrument, performerData);
-                performer = new RhythmPerformer();
+                let rhythmSource2 = new RhythmSource(this, this.conductor, 'mallet-mellow');
+                let rhythmPerformer2 = new RhythmPerformer(x, 
+                                                           y,
+                                                           this.performerRadius,
+                                                           primaryColor,
+                                                           this.ctx,
+                                                           this.engine,
+                                                           rhythmSource2);   
+                this.performers.push(rhythmPerformer2);
+                this.conductor.registerActor(rhythmPerformer2);     
             }
-            if(performer && soundSource) {
-                this.performers.push(performer);
-                this.soundSources.push(soundSource);
-                this.conductor.registerActor(performer, soundSource);
-            }
+            
         }
-
-        console.log(this.performers)
+        Tone.Transport.start();
+        this.conductor.play();
+        window.$music_playing = true;
+        this.setPlay(true);
     }
 
 
@@ -210,8 +252,6 @@ class DotOrchestra extends Renderer {
                  }
              }
          });
-
-
     }
 
     /**
@@ -240,7 +280,6 @@ class DotOrchestra extends Renderer {
             Matter.Bodies.rectangle(width/2, navBarHeight, width, thickness, wallOptions), // top
             Matter.Bodies.rectangle(0, height/2, thickness, height, wallOptions) // left
         ]);
-      
     }
 
     resize() {

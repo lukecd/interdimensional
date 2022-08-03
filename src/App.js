@@ -10,20 +10,23 @@ import About from "./pages/About";
 import Canvas from "./Player/Canvas";
 
 const App = () => {
-    const [playing, setPlaying] = useState(false);
+    const [play, setPlay] = useState(false);
+    const [demoMode, setDemoMode] = useState(true);
 
     return (
         <div name='top' className='w-full h-view  min-h-screen top-0 bg-background'>
             <Canvas className='fixed'
                     height={window.innerHeight} 
                     width={window.innerWidth}
-                    playing={playing} 
+                    play={play} 
+                    setPlay={setPlay}
+                    demoMode={setDemoMode}
                     />
             <div className='absolute w-full z-1 top-0 bg-background'>
-                <Navbar className='bg-black z-3' setPlaying={setPlaying}/>
+                <Navbar className='bg-black z-3' play={play} setPlay={setPlay}/>
                 <Routes>
                     <Route path="/" element={<Stage />} />
-                    <Route path="/mixer" element={<Mixer />} />
+                    <Route path="/mixer" element={<Mixer />}  play={play} setPlay={setPlay}/>
                     <Route path="/mint" element={<Mint />} />
                     <Route path="/swap" element={<Swap />} />
                     <Route path="/about" element={<About />} />

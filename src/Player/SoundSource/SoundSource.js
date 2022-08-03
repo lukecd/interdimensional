@@ -49,5 +49,13 @@ class SoundSource {
         return this.performer;
     }
 
+    getVolume() {
+
+    }
+
+    setVolume(vol) {
+        
+    }
+
 }
 export default SoundSource;

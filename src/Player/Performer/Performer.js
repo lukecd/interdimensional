@@ -58,6 +58,10 @@ class Performer {
     getRenderer() {
       return this.renderer;
     }
+
+    getSoundsource() {
+      return this.soundSource;
+    }
 }
 
 export default Performer;

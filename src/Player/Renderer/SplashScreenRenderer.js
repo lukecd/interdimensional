@@ -7,7 +7,7 @@ import * as Tone from "tone"
  */
 class SplashScreenRenderer extends Renderer {
 
-    constructor(x, y, width, height, bgColor, colors, engine, player) {
+    constructor(x, y, width, height, bgColor, colors, engine, player, ctx) {
         super(x, y, width, height);
         this.colors = colors;
         this.engine = engine;
@@ -18,6 +18,7 @@ class SplashScreenRenderer extends Renderer {
         this.mouseX = 0;
         this.mouseY = 0;
         this.globalAlpha = 1;
+        this.isDemoMode = true;
 
         // so i'm hosting this font locally, not sure it's the best way
         // TODO: figure it out
@@ -49,10 +50,14 @@ class SplashScreenRenderer extends Renderer {
             isStatic: true
         });
         Matter.Composite.add(this.composite, this.demoModeButton);
-
-        // this.demoModeButton = new Path2D()
-        // this.demoModeButton.rect(this.width/2-100, this.height/2-37, 200, 75);
-        // this.demoModeButton.closePath();
+        
+        //TODO FIGURE OUT WHY mouse isn't working on spalsh screen
+        // const mMouse = Matter.Mouse.create(ctx.canvas);
+        // let options = {
+        //   mouse: mMouse
+        // }
+        // const mConstraint = Matter.MouseConstraint.create(engine, options);
+        // Matter.Composite.add(engine.world, mConstraint);
     }
 
     setupEvents() {
@@ -81,7 +86,7 @@ class SplashScreenRenderer extends Renderer {
                     (self.mouseX < self.centerButtonRadius) &&
                     (self.mouseY < 60) &&
                     (self.mouseY > 31)) {
-                self.launchWalletMode();
+                self.launchNFTMode();
             }
         }, false)
     }
@@ -98,14 +103,25 @@ class SplashScreenRenderer extends Renderer {
         this.height =  window.innerHeight;
     }
 
+    /**
+     * @notice Triggers the exit animation and sets parameters for demo mode
+     *         On completion of the animation, a callback will be made to launch the app
+     */
     launchDemoMode() {
+        this.isDemoMode = true;
         this.engine.gravity.y = 0.1;
         super.setFadeOut(true);
         Tone.Transport.start();
     }
 
-    launchWalletMode() {
-
+    /**
+    * @notice Triggers the exit animation and sets parameters for demo mode
+    *         On completion of the animation, a callback will be made to launch the app
+    */
+    launchNFTMode() {
+        this.isDemoMode = false;
+        this.engine.gravity.y = 0.1;
+        super.setFadeOut(true);
     }
 
     draw(ctx) {
@@ -179,7 +195,8 @@ class SplashScreenRenderer extends Renderer {
             ctx.globalAlpha = this.globalAlpha;
             this.globalAlpha -= 0.009;
             if(this.globalAlpha <= 0) {
-                this.player.launchApp(true);
+                // this actually launches the app, clicking the button just triggers the animation
+                this.player.launchApp(this.isDemoMode);
                 this.engine.gravity.y = 0.0;
             }
         }

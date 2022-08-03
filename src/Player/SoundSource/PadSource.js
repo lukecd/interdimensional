@@ -34,11 +34,8 @@ class PadSource extends SoundSource {
         var vol = new Tone.Volume();
     
         // Example of LFO for volume.
-        var lfo2 = new Tone.LFO(0.1, -100, -20); // hertz, min, max
-        lfo2.connect(vol.volume);
-        lfo2.start();
-        this.sampler.chain(delay, verb, vol);
-        vol.toDestination();
+        this.sampler.chain(delay, verb);
+        verb.toDestination();
     }
 
      /**
@@ -93,6 +90,14 @@ class PadSource extends SoundSource {
 
     pause() {
         Tone.Transport.pause();
+    }
+
+    getVolume() {
+        return this.sampler.volume.value;
+    }
+
+    setVolume(vol) {
+        this.sampler.volume.value = vol;
     }
 
 }

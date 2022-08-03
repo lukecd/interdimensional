@@ -16,8 +16,8 @@ import DotOrchestra from './Renderer/DotOrchestra.js';
  * @param {*} canvas A reference to the site's canvas
  */
 
- const draw = (ctx, canvas, engine, signer) => {
-    new Player(ctx, canvas, engine, signer);
+ const draw = (ctx, canvas, engine, play, setPlay) => {
+    new Player(ctx, canvas, engine, play, setPlay);
 }
 export default draw;
 
@@ -30,11 +30,12 @@ export default draw;
  * sub-classes and swap between them here.
  */
 class Player {
-    constructor(ctx, canvas, engine, signer) {
+    constructor(ctx, canvas, engine, play, setPlay) {
         this.ctx = ctx;
         this.canvas = canvas;
         this.engine = engine;
-
+        this.play = play;
+        this.setPlay = setPlay;
 
         this.bgColor = '#12082D';
         this.colors = ['#8F0380', '#EC205B', '#FC7208', '#D00204', '#7701AD'];
@@ -46,11 +47,8 @@ class Player {
         window.addEventListener('resize', this.resize.bind(this), false);
         this.resize();
         requestAnimationFrame(this.animate.bind(this));
-        this.signer = signer;
 
-        this.renderer = new SplashScreenRenderer(0, 0, this.width, this.height, this.bgColor, this.colors, this.engine, this);
-       
-
+        this.renderer = new SplashScreenRenderer(0, 0, this.width, this.height, this.bgColor, this.colors, this.engine, this, ctx);
     }
 
     /**
@@ -59,7 +57,11 @@ class Player {
      * @param {*} shouldDemo True if we should launch in demo mode
      */
     launchApp(shouldDemo) {
-        this.renderer = new DotOrchestra(0, 0, this.width, this.height, this.ctx, this.bgColor, this.colors, this.engine, shouldDemo);
+        console.log("B player setting this.play=", this.play)
+        this.setPlay(true);
+        console.log("A player setting this.play=", this.play)
+        this.renderer = new DotOrchestra(0, 0, this.width, this.height, this.ctx, this.bgColor, 
+                                         this.colors, this.engine, shouldDemo, this.play, this.setPlay);
     }
 
     resize() {

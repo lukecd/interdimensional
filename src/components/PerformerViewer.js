@@ -6,7 +6,7 @@ import {
 } from "wagmi";
 import { ethers } from "ethers";
 import chroma from "chroma-js";
-import contractABI from '../abi/MosEisleyCantina.json';
+import contractABI from '../abi/InterdimensionalOne.json';
 
 /**
  * 

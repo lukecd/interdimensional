@@ -87,6 +87,7 @@ class RhythmSource extends SoundSource {
                 let note = this.conductor.getMidNote(noteIndex, chordNotes);
                 //console.log('sampler vol: ',sampler.volume.value);
                 this.sampler.triggerAttackRelease(note, this.duration, time);
+                //this.conductor.notePlayed(this);
                 Tone.Draw.schedule(this.conductor.notePlayed(this), time);
             }
 
@@ -95,12 +96,19 @@ class RhythmSource extends SoundSource {
     }
 
     play() {
-        this.playRhythm(this.motif1, [1, 2, 3, 4, 3, 2], 1); //x = play, - = rest
-        //this.evolveMotif(this.motif2, [4, 3, 2, 1, 0], this.shiftRhythm(rhythm, 3), 2, '8n', '16n', 7); //1 = play, 0 = rest
+        this.playRhythm(this.motif1, [1, 2, 3, 4, 3, 2], 1); 
     }
 
     pause() {
 
+    }
+
+    getVolume() {
+        return this.sampler.volume.value;
+    }
+
+    setVolume(vol) {
+        this.sampler.volume.value = vol;
     }
 
 }
