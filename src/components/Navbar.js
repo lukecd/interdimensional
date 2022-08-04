@@ -3,7 +3,6 @@ import '../index.css';
 import { Link, useHistory } from "react-router-dom";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-
 import React, { useState } from 'react';
 
 import {FaBars, FaTimes} from 'react-icons/fa';
@@ -30,7 +29,7 @@ const Navbar = (props) => {
     return (
         <div className='fixed w-full h-[90px] flex justify-between items-center text-[#15274c]'>
             <div>
-                
+                  
             </div>
             {/* desktop menu */} 
             <ul className='hidden lg:flex justify-items-center items-center px:5 py:5'>
@@ -52,19 +51,20 @@ const Navbar = (props) => {
                         Mixer
                     </Link>
                 </li>
+
                 <li>
-                    <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/mint">
-                        Mint
-                    </Link>
-                </li>
-                <li>
-                    <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/swap">
-                        Swap
+                    <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/sounds">
+                        Sound Store
                     </Link>
                 </li>
                 <li>
                     <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/about">
                         About
+                    </Link>
+                </li>
+                <li>
+                    <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/mint">
+                        Mint
                     </Link>
                 </li>
             </ul>
@@ -88,19 +88,20 @@ const Navbar = (props) => {
                         Mixer
                     </Link>
                 </li>
+
                 <li className='py-6 text-4xl'>
-                     <Link onClick={handleClick} to="me" to='/mint'>
-                        Mint
-                    </Link>
-                </li>
-                <li className='py-6 text-4xl'>
-                     <Link onClick={handleClick} to="coding" to='/swap'>
-                        Swap
+                     <Link onClick={handleClick} to="coding" to='/sounds'>
+                        Sound Store
                     </Link>
                 </li>
                 <li className='py-6 text-4xl'>
                      <Link onClick={handleClick} to="tv-video" to='/about'>
                         About
+                    </Link>
+                </li>
+                <li className='py-6 text-4xl'>
+                     <Link onClick={handleClick} to="me" to='/mint'>
+                        Mint
                     </Link>
                 </li>
                 <li>

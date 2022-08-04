@@ -42,6 +42,10 @@ class PadSource extends SoundSource {
      * @notice Recursive function called over and over to create our evolving pad
      */
      evolvePad(time) {
+        console.log("PadSource evolvePad 1");
+
+        if(this.paused) return;
+        console.log("PadSource evolvePad 2");
         this.currentChord = this.conductor.getNewChord();
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
@@ -51,8 +55,11 @@ class PadSource extends SoundSource {
 
         this.sampler.triggerAttackRelease(this.currentChord, duration, time);
         //this.conductor.notePlayed(this);
-        Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);
-        Tone.Draw.schedule(this.conductor.notePlayed(this), '+' + duration);
+        this.transportId = Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);
+        console.log("this.transportId=", this.transportId);
+
+        // always check if we have a Conductor. It's possible to not have one during preview
+        if(this.conductor) Tone.Draw.schedule(this.conductor.notePlayed(this), '+' + duration);
         // const self = this;
         // Tone.Draw.schedule(function(){
         //     self.conductor.notePlayed(self);
@@ -63,7 +70,8 @@ class PadSource extends SoundSource {
      * @notice Starts Pad playing
      */
     play() {
-        console.log("PadSource play")
+        this.paused = false;
+        console.log("PadSource play");
         Tone.Transport.schedule(this.evolvePad.bind(this), "1");
         // Tone.Draw.schedule(function(){
         //     this.conductor.notePlayed(this);
@@ -89,7 +97,9 @@ class PadSource extends SoundSource {
     }
 
     pause() {
-        Tone.Transport.pause();
+        this.paused = true;
+        //Tone.Transport.cancel(this.transportId);
+        //Tone.Transport.pause();
     }
 
     getVolume() {

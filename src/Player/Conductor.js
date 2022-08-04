@@ -3,13 +3,15 @@ import Matter from 'matter-js';
 import Particle from './Renderer/Particle.js';
 import * as Tone from "tone"
 import * as Tonal from "@tonaljs/tonal";
+import SoundControl from './SoundControl.js';
 
 /**
  * Handles everything music theory
  */
-class Conductor {
+class Conductor extends SoundControl {
     
     constructor(renderer, performers, particles, engine) {
+        super();
         this.renderer = renderer;
         this.performers = [];
         this.particles = particles;
@@ -18,12 +20,6 @@ class Conductor {
 
         // init audio
         this.initAudio();
-
-        this.currentChord = 0;
-        this.nextChord = 0;
-        this.scaleNotes = Tonal.Scale.get("C3 major").notes;
-        this.chords = this.getChordsForNote(this.scaleNotes);
-        this.currentChordId = 0;
 
         // References to our Performer Objects
         this.dronePerformer = null;
@@ -45,7 +41,6 @@ class Conductor {
      *         Randomizes the rhythm every 8 measures.
      */
     evolveMusic() {
-       
         Tone.Transport.scheduleRepeat(function(time){
             console.log('1 measure passed');
         }, "1m");
@@ -61,7 +56,6 @@ class Conductor {
             console.log("AFTER this.curRythm1 ", self.curRhythm1)
             console.log("AFTER this.curRythm2 ", self.curRhythm2)
         }, "8m");
-
     }
 
     /**
@@ -105,55 +99,6 @@ class Conductor {
         return chords;
     }
 
-    /**
-     * @notice Helper function to build chords / get notes from a chord
-     */
-    getMidNote(noteNumber, notes) {
-        let zeroOctave = Tonal.Note.octave(notes[0]);
-        let numNotes = notes.length;
-        let i = this.modulo(noteNumber, numNotes);
-        let octave = zeroOctave + Math.floor(noteNumber / numNotes);
-        return Tonal.Note.pitchClass(notes[i]) + octave;
-    } 
-
-    /**
-    * @notice Helper method to generate euclidean rhythms using the Bresenham Line method
-    * Based on code in https://medium.com/code-music-noise/euclidean-rhythms-391d879494df
-    * Returns an array representing a binary sequence. Play on a 1, rest on a 0.
-    */
-    bresenhamEuclidean(onsets, totalPulses) {
-        let previous = null;
-        let pattern = [];
-
-        for (let i = 0; i < totalPulses; i++) {
-            var xVal = Math.floor((onsets  / totalPulses) * i);
-            pattern.push(xVal === previous ? 0 : 1);
-            previous = xVal;
-        }
-        return pattern;
-    }
-    
-    randomIntFromRange(min, max) {
-        return Math.floor(Math.random() * (max-min +1) + min);
-    }
-
-    /**
-     * @notice Helper function to shift a binary sequence representing a rhythm a total of numShifts shifts
-     */
-    shiftRhythm(rhythm, numShifts) {
-        for(let i=0; i<numShifts; i++) {
-            const shiftee = rhythm.shift();
-            rhythm.push(shiftee);
-        }
-        return rhythm;
-    }  
-
-    /**
-     * @notice Helper function to build chords
-     */
-    modulo(n, m) {
-        return ((n %  m) + m) % m;
-    }
 
     initAudio() {
         Tone.Transport.bpm.value = 70;
@@ -203,20 +148,7 @@ class Conductor {
         }
     }
 
-    /**
-     * @notice Returns the current chord being played by the pad.   
-     */
-    getCurrentChord() {
-        return this.chords[this.currentChordId];
-    }
 
-    /**
-     * @notice Updates the current chord and returns that.   
-     */
-    getNewChord() {
-        this.currentChordId = Math.floor(Math.random() * this.chords.length);
-        return this.chords[this.currentChordId];
-    }
 
     /**
      * @notice As the Conductor is responsible for maintaining mellifluous musicality across all Performers

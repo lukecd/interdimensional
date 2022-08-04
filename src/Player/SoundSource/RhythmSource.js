@@ -96,11 +96,13 @@ class RhythmSource extends SoundSource {
     }
 
     play() {
+        this.paused = false;
         this.playRhythm(this.motif1, [1, 2, 3, 4, 3, 2], 1); 
     }
 
     pause() {
-
+        this.paused = true;
+        this.loop.stop();
     }
 
     getVolume() {

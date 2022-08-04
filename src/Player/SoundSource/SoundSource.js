@@ -7,6 +7,7 @@ import * as Tonal from "@tonaljs/tonal";
 class SoundSource {
 
     constructor(player, conductor) {
+        // TODO, DO I STILL NEED THE PLAYER???
         this.player = player;
 
         // we pass a refernce to the conductor so a SoundSource can tell the conductor a
@@ -14,6 +15,8 @@ class SoundSource {
         // this allows the conductor to deploy visuals and to keep with our pattern
         // of one algorithm generating both visuals and audio.
         this.conductor = conductor;
+
+        this.paused = true;
     }
 
     init(scaleNotes) {

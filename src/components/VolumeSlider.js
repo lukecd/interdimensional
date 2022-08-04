@@ -31,10 +31,7 @@ const VolumeSlider = (props) => {
 
 
     const updateVol = (newVol) => {
-        console.log("VolumeSlider props.type ", props.type)
-        console.log("newVol ", newVol);
         newVol = scale(newVol, 0, 100, -60, 0);
-        console.log("newVol scaled ", newVol);
         if(window.$CONDUCTOR) {
             if(props.type === 'drone') {
                 window.$CONDUCTOR.dronePerformer.soundSource.setVolume(newVol);

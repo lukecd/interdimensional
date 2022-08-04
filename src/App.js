@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Stage from "./pages/Stage";
+import SoundStore from "./pages/SoundStore";
 import Mint from "./pages/Mint";
 import Mixer from "./pages/Mixer";
-import Swap from "./pages/Swap";
 import About from "./pages/About";
 import Canvas from "./Player/Canvas";
 
@@ -27,8 +27,8 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Stage />} />
                     <Route path="/mixer" element={<Mixer />}  play={play} setPlay={setPlay}/>
+                    <Route path="/sounds" element={<SoundStore />} />
                     <Route path="/mint" element={<Mint />} />
-                    <Route path="/swap" element={<Swap />} />
                     <Route path="/about" element={<About />} />
                 </Routes>
             </div>

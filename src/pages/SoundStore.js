@@ -12,12 +12,11 @@ import contractABI from '../abi/InterdimensionalOne.json';
 import PerformerViewer from "../components/PerformerViewer";
 import VolumeSlider from "../components/VolumeSlider";
 
-const Mixer = (props) => {
+const SoundStore = (props) => {
   let [nfts, setNFTs] = useState([]);
   let [droneNFTs, setDroneNFTs] = useState([]);
   let [padNFTs, setPadNFTs] = useState([]);
   let [rhythmNFTs, setRhythmNFTs] = useState([]);
-
   const { data: allNFTs } = useContractRead({
     addressOrName: window.$CONTRACT_ADDRESS,
     contractInterface: contractABI,
@@ -52,28 +51,26 @@ const Mixer = (props) => {
 
   }, []);
 
-
-
-  return (
+return (
     <div className='mt-[90px] w-screen h-screen bg-background'>
       <div className='grid grid-cols-3 gap-4 ml-5 mr-5 bg-background border-8 border-primary'>
 
       <div>
           <h1 className='text-3xl align-center font-heading bg-primary'>Drones</h1>
-          <VolumeSlider type="drone" play={props.play}/>
+
           {droneNFTs.map(nft => {
             return (
-              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false"/>
+              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="true" price={nft.price}/>
             );
           })}
         </div>
 
         <div>
           <h1 className='text-3xl align-center font-heading bg-primary'>Pads</h1>
-          <VolumeSlider type="pad" play={props.play}/>
+
           {padNFTs.map(nft => {
             return (
-              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false"/>
+              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="true" price={nft.price}/>
             );
           })}
 
@@ -81,10 +78,10 @@ const Mixer = (props) => {
 
         <div className="">
           <h1 className='text-3xl align-center font-heading bg-primary'>Rhythms</h1>
-          <VolumeSlider type="rhythm" play={props.play}/>
+
           {rhythmNFTs.map(nft => {
             return (
-              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false" />
+              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="true" price={nft.price}/>
             );
           })}
 
@@ -97,12 +94,4 @@ const Mixer = (props) => {
   )
 }
 
-export default Mixer
-
-/***
- * 
- * 
-
- 
-
- */
+export default SoundStore

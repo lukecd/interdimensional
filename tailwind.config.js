@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       fontFamily: {
         heading: ["Josefin Sans"],
+        info: ["Poppins"],
        },
     },
     colors: {
