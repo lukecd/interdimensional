@@ -1,6 +1,9 @@
 import React, { useState} from "react";
-import { ColorPicker, useColor } from "react-color-palette";
+
+import NFTDesigner from "../components/NFTDesigner"
 import "react-color-palette/lib/css/styles.css";
+import { ColorPicker, useColor } from "react-color-palette";
+
 import {
   useContractWrite,
   useContractRead,
@@ -59,11 +62,9 @@ const Mint = () => {
 
         <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>1. Pick A Color</h1>
-            <div className='pt-3'>
-              <ColorPicker width={456} height={228} 
-                        color={color} 
-                        onChange={setColor} hideHSV hideRGB dark />
-            </div>
+
+              <NFTDesigner type="drone" />
+
         </div>
 
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>

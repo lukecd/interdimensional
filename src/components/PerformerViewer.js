@@ -66,7 +66,7 @@ const PerformerViewer = (props) => {
       setPreviewEngine(null);
   }
 
-  const buyNFT = () => {
+  const mintNFT = () => {
 
   }
 
@@ -76,9 +76,9 @@ const PerformerViewer = (props) => {
 
       {(shouldShowPrice && (
       <div className="flex flex-row justify-end">
-        <span className="bg-secondary font-info text-xl">Price {formattedPrice} MATIC</span>
-        <button onClick={buyNFT} className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 mx-1 px-5 rounded-sm'>
-          Buy 
+        <span className="bg-secondary font-info text-xl mt-2 mr-2">Price {formattedPrice} MATIC</span>
+        <button onClick={mintNFT} className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 mx-1 px-5 my-2 mr-10 rounded-sm'>
+          Mint 
         </button>
         {!isPreviewing && (
           <FiPlay size={40} onClick={playPreview} className='hover:bg-[#d31a83] hover:border-[#d31a83] w-[40px]'/>
