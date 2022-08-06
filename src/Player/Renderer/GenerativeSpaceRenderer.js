@@ -73,13 +73,15 @@ class GenerativeSpaceRenderer extends Renderer {
         let curRadius = this.sunRadius + radiusIncrease;
         for(let i=0; i<this.orbits.length; i++) {
             if(this.orbits[i] === 1) {
+                // orbital path
                 this.circles.push({
                     x: this.width / 2,
                     y: this.width / 2,
                     radius: curRadius,
                     color: this.color,
                     fill: false,
-                    isPlanet: false
+                    isPlanet: false,
+                    lineWidth: 1+i
                 });
 
                 const angle = Math.random() * Math.PI*2;
@@ -87,6 +89,7 @@ class GenerativeSpaceRenderer extends Renderer {
                 const y = Math.sin(angle) * curRadius;
                 const planetRadius = this.randomIntFromRange(10, 40);
 
+                // planet
                 this.circles.push({
                     x: (this.width / 2) - x,
                     y: (this.height / 2) - y,
@@ -100,7 +103,7 @@ class GenerativeSpaceRenderer extends Renderer {
             }
             curRadius += radiusIncrease;           
         }
-        console.log("circles ", this.circles);
+        console.log("tvSVGircles ", this.toSVG());
     }
 
     animate(time) {
@@ -111,40 +114,43 @@ class GenerativeSpaceRenderer extends Renderer {
             if(this.circles[i].fill) {
                 // if we are a planet, update orbit
                 if(this.circles[i].isPlanet) {
-                    this.circles[i].angle += 0.006;
+                    // make items closer to the "sun" move faster
+                    // lazy orbital math
+                    this.circles[i].angle += 0.001 + ( (this.circles.length - i) / 1000);
                     const x = Math.cos(this.circles[i].angle) * this.circles[i].parentRadius;
                     const y = Math.sin(this.circles[i].angle) * this.circles[i].parentRadius;
 
                     this.circles[i].x = (this.width / 2) - x;
                     this.circles[i].y = (this.height / 2) - y;
                 }
-
+                // draw planet
                 this.ctx.beginPath();
                 this.ctx.arc(this.circles[i].x, this.circles[i].y, this.circles[i].radius, 0, 2 * Math.PI);
                 this.ctx.fillStyle = this.circles[i].color;
                 this.ctx.fill();
             }
             else {
+                // draw orbital path
                 this.ctx.beginPath();
                 this.ctx.arc(this.circles[i].x, this.circles[i].y, this.circles[i].radius, 0, 2 * Math.PI);
-                this.ctx.lineWidth = 1+i;
+                this.ctx.lineWidth = this.circles[i].lineWidth; 
                 this.ctx.strokeStyle = this.circles[i].color;
                 this.ctx.stroke();
             }
         }
 
-        //then cover it up
-        if(this.shouldReveal && this.colorAlpha > 0) {
-            this.ctx.fillStyle = this.bgColor;
-            this.ctx.globalAlpha = this.colorAlpha;
-            this.ctx.fillRect(0, 0, this.width, this.height);
-            this.colorAlpha -= 0.01;
-            this.ctx.globalAlpha = 1;
-        }
-        if(!this.shouldReveal) {
-            this.ctx.fillStyle = this.bgColor;
-            this.ctx.fillRect(0, 0, this.width, this.height);  
-        }
+        // //then cover it up
+        // if(this.shouldReveal && this.colorAlpha > 0) {
+        //     this.ctx.fillStyle = this.bgColor;
+        //     this.ctx.globalAlpha = this.colorAlpha;
+        //     this.ctx.fillRect(0, 0, this.width, this.height);
+        //     this.colorAlpha -= 0.01;
+        //     this.ctx.globalAlpha = 1;
+        // }
+        // if(!this.shouldReveal) {
+        //     this.ctx.fillStyle = this.bgColor;
+        //     this.ctx.fillRect(0, 0, this.width, this.height);  
+        // }
 
         requestAnimationFrame(this.animate.bind(this));
     }
@@ -181,6 +187,26 @@ class GenerativeSpaceRenderer extends Renderer {
         }
         return rhythm;
     } 
+
+    /**
+     * @notice converts the current point array to SVG data
+     */
+    toSVG() {
+        let svgVersion = `<svg height="400" width="400" style="background-color:${this.bgColor}">`;
+
+        for(let i=0; i<this.circles.length; i++) {
+            if(this.circles[i].fill) {
+                svgVersion += `<circle cx="${this.circles[i].x}" cy="${this.circles[i].y}" r="${this.circles[i].radius}" fill="${this.circles[i].color}" />`;
+            }
+            else {
+                svgVersion += `<circle cx="${this.circles[i].x}" cy="${this.circles[i].y}" r="${this.circles[i].radius}" stroke="${this.circles[i].color}" stroke-width="${this.circles[i].lineWidth}" fill-opacity="0" />`;
+            }
+        }
+
+        svgVersion += '</svg>';
+        return svgVersion;
+    }
+
 
 }
 
