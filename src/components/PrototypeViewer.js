@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import GenerativeSpaceRenderer from "../Player/Renderer/GenerativeSpaceRenderer";
 
 import {
+  useContractWrite,
   useContractRead,
   useWaitForTransaction,
 } from "wagmi";
@@ -10,7 +11,8 @@ import chroma from "chroma-js";
 import contractABI from '../abi/InterdimensionalOne.json';
 import { FiPlay, FiPause } from 'react-icons/fi';
 import PreviewEngine from "../Player/PreviewEngine";
-import { checkProperties } from "ethers/lib/utils";
+
+
 /**
  * 
  * @returns A responsive viewer showing a Performer NFT
@@ -27,10 +29,17 @@ const PrototypeViewer = (props) => {
   let [instrument, setInstrument] = useState("");
   let [soundFiles, setSoundFiles] = useState("");
 
-  function parseBytes(bytes) {
-    const name = ethers.utils.parseBytes32String(bytes);
-    return name;
-  }
+  const {
+    data: mintData,
+    write: mint,
+    isLoading: isMintLoading,
+    isSuccess: isMintStarted,
+    error: mintError,
+  } = useContractWrite({
+    addressOrName: window.$CONTRACT_ADDRESS,
+    contractInterface: contractABI,
+    functionName: "mint",
+  });
 
   useEffect(() => {
     const pId = props.prototype.prototypeId.toString();
@@ -43,14 +52,12 @@ const PrototypeViewer = (props) => {
     let sounds = props.prototype.soundFiles.toString();
     sounds = ethers.utils.toUtf8String(sounds);
     let soundOBJ = JSON.parse(sounds);
-    console.log("soundOBJ ", soundOBJ);
     setSoundFiles(soundOBJ);
   }, []);
 
+  // called when the canvas is finally laid out
   useLayoutEffect(() => {
-
     var canvas = document.getElementById(canvasName);
-    console.log("got canvas ", canvas)
     if(canvas) {
       var ctx = canvas.getContext("2d");
       ctx.fillStyle = props.prototype.color;
@@ -59,6 +66,7 @@ const PrototypeViewer = (props) => {
   }, [canvasName]);
 
   const playPreview = () => {
+    console.log("playPreview CALLED")
     const preview = new PreviewEngine(part, instrument, soundFiles);
     console.log("created preview ", preview);
     preview.play();
@@ -67,17 +75,24 @@ const PrototypeViewer = (props) => {
   }
 
   const pausePreview = () => {
+    console.log("pausePreview CALLED")
       previewEngine.pause();
       setIsPreviewing(false);
       setPreviewEngine(null);
   }
 
-  const mintNFT = () => {
+  const mintNFT = async () => {
+    console.log("mintNFT called")
     var canvas = document.getElementById(canvasName);
     if(canvas) {
       var ctx = canvas.getContext("2d");
       const renderer = new GenerativeSpaceRenderer(0, 0, 400, 400, props.prototype.color, ctx);
+      console.log("prototypeId=", prototypeId);
+      console.log("renderer.toSVG()=", renderer.toSVG());
+      
+      await mint({args: [prototypeId, renderer.toSVG()]});
     }
+    console.log("function ended")
   }
 
 

@@ -191,7 +191,8 @@ class SplashScreenRenderer extends Renderer {
         ctx.fillText("NFT Mode", 0-this.centerButtonRadius+55, 60);
         ctx.restore();
         
-        if(super.getFadeOut()) {
+        if(this.getFadeOut()) {
+            console.log("splash screen renderer getFadeOut")
             ctx.globalAlpha = this.globalAlpha;
             this.globalAlpha -= 0.009;
             if(this.globalAlpha <= 0) {

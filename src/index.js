@@ -50,6 +50,7 @@ window.$music_playing = false;
 window.$CONTRACT_ADDRESS = "0x3648Bde60a2130dC125898E84B7B37035A1aA385";
 window.$CONDUCTOR = null;
 window.$PERFORMING_NFTs = [];
+window.$PROTOTYPES = [];
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -2,15 +2,18 @@
 import React, { useState, useEffect } from "react";
 
 import {
+  useContract,
   useContractWrite,
   useContractRead,
   useWaitForTransaction,
+  useSigner
 } from "wagmi";
 import { ethers } from "ethers";
 import chroma from "chroma-js";
 import contractABI from '../abi/InterdimensionalOne.json';
 import PerformerViewer from "../components/PerformerViewer";
 import VolumeSlider from "../components/VolumeSlider";
+import { isLabelWithInternallyDisabledControl } from "@testing-library/user-event/dist/utils";
 
 const Mixer = (props) => {
   let [nfts, setNFTs] = useState([]);
@@ -18,41 +21,107 @@ const Mixer = (props) => {
   let [padNFTs, setPadNFTs] = useState([]);
   let [rhythmNFTs, setRhythmNFTs] = useState([]);
 
-  const { data: allNFTs } = useContractRead({
+  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+
+  // contract signer, used to get all NFTs for a user.
+  // i'm using this and not useContractRead as I need msg.sender inside the contract to point back to me
+  const contractSigner = useContract({
     addressOrName: window.$CONTRACT_ADDRESS,
     contractInterface: contractABI,
-    functionName: "getAllNFTs",
-    watch: false,
+    signerOrProvider: signer,
+  });    
+
+  // read all protypes seperatly, then cross reference
+  // basically do a table join thing on my own to reduce calls to the blockchain
+  const { data: allPrototypes } = useContractRead({
+    addressOrName: window.$CONTRACT_ADDRESS,
+    contractInterface: contractABI,
+    functionName: "getPrototypesForCollectionId",
+    watch: false, // TODO: should this be true?
+    args: 1
   });
 
   // TODO change call from getAllNFTs to be user specific
 
   useEffect(() => {
-    if (allNFTs) {
-      console.log("allNFTs ", allNFTs);
-      setNFTs(allNFTs);
-      window.$PERFORMING_NFTs = allNFTs;
+    if(signer) {
+      //create a local copy to use while we wait for asynchronous calls to state variables to settle
+      let localNFTs = [];
 
-      // break my NFTs into different categories
-      let drones = allNFTs.filter(function (nft) {
-        return nft.performerType === 'drone'
-      })
-      setDroneNFTs(drones);
-
-      let pads = allNFTs.filter(function (nft) {
-        return nft.performerType === 'pad'
-      })
-      setPadNFTs(pads);
-
-      let rhythms = allNFTs.filter(function (nft) {
-        return nft.performerType === 'rhythm'
-      })
-      setRhythmNFTs(rhythms);
+      const checkNFTs = async () => {
+        await getMyNFTS()
+          //.then( returnValue => {setNFTs(returnValue); localNFTs=returnValue})
+          .catch(error => {console.log("getMyNFTS ", error)});
+      };
+      checkNFTs();
     }
 
-  }, []);
+  }, [signer]);
 
+  const prototypeIdToType = (prototypeId) => {
+    console.log("allPrototypes ", allPrototypes)
+    if(allPrototypes) {
+      for(let i=0; i<allPrototypes.length; i++) {
+        if(allPrototypes[i].prototypeId == prototypeId) return allPrototypes[i].part;
+      }
+    }
 
+    return null;
+  }
+
+  const layoutNFTs = async (myNFTs) => {
+    window.$PERFORMING_NFTs = nfts;
+    window.$PROTOTYPES = allPrototypes;
+    console.log("layoutNFTs ", myNFTs);
+    let drones = [];
+    let pads = [];
+    let rhythms = [];
+
+    for(let i=0; i<myNFTs.length; i++) {
+      const curType = prototypeIdToType(myNFTs[i].prototypeId.toString());
+      console.log(myNFTs[i].prototypeId.toString());
+      console.log(curType)
+      if(curType == 'drone') drones.push(myNFTs[i]);  
+      else if(curType == 'pad') pads.push(myNFTs[i]);
+      else if(curType == 'rhythm') rhythms.push(myNFTs[i]);
+
+    }
+    console.log("drones ", drones);
+    console.log("pads ", pads);
+    console.log("rhythms ", rhythms);
+    setDroneNFTs(drones);
+    setPadNFTs(pads);
+    setRhythmNFTs(rhythms);
+    // // break my NFTs into different categories
+    // let drones = nfts.filter(function (nft) {
+    //   return nft.performerType === 'drone'
+    // })
+    // setDroneNFTs(drones);
+
+    // let pads = nfts.filter(function (nft) {
+    //   return nft.performerType === 'pad'
+    // })
+    // setPadNFTs(pads);
+
+    // let rhythms = nfts.filter(function (nft) {
+    //   return nft.performerType === 'rhythm'
+    // })
+    // setRhythmNFTs(rhythms);
+  }
+
+  /**
+   * 
+   * @returns The amount of ADAMS tokens currently staked
+   */
+  const getMyNFTS = async () => {
+    console.log("myNFTs isSignerError", isSignerError);
+    console.log("myNFTs signer", signer);
+    console.log("myNFTs contractSigner", contractSigner);
+    let myNFTs = await contractSigner.getMyNFTS();
+    console.log("myNFTs ", myNFTs);
+    setNFTs(myNFTs);
+    layoutNFTs(myNFTs);
+  }
 
   return (
     <div className='mt-[90px] w-screen h-screen bg-background'>

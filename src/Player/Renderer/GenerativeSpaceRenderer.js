@@ -1,6 +1,5 @@
 import Renderer from "./Renderer";
 import Matter from 'matter-js';
-import * as Tone from "tone";
 import chroma from "chroma-js";
 
 /**
@@ -103,7 +102,7 @@ class GenerativeSpaceRenderer extends Renderer {
             }
             curRadius += radiusIncrease;           
         }
-        console.log("tvSVGircles ", this.toSVG());
+
     }
 
     animate(time) {
@@ -194,16 +193,16 @@ class GenerativeSpaceRenderer extends Renderer {
 
     // TODO CHANGE " " to ''
     toSVG() {
-        //'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 800 800">'
+        let svgVersion =  `<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' viewBox='0 0 400 400' style='background-color:${this.bgColor}'>`;
 
-        let svgVersion = `<svg height='400' width="400" style="background-color:${this.bgColor}">`;
+        //let svgVersion = `<svg height='400' width='400' style='background-color:${this.bgColor}'>`;
 
         for(let i=0; i<this.circles.length; i++) {
             if(this.circles[i].fill) {
-                svgVersion += `<circle cx="${this.circles[i].x}" cy="${this.circles[i].y}" r="${this.circles[i].radius}" fill="${this.circles[i].color}" />`;
+                svgVersion += `<circle cx='${this.circles[i].x}' cy='${this.circles[i].y}' r='${this.circles[i].radius}' fill='${this.circles[i].color}' />`;
             }
             else {
-                svgVersion += `<circle cx="${this.circles[i].x}" cy="${this.circles[i].y}" r="${this.circles[i].radius}" stroke="${this.circles[i].color}" stroke-width="${this.circles[i].lineWidth}" fill-opacity="0" />`;
+                svgVersion += `<circle cx='${this.circles[i].x}' cy='${this.circles[i].y}' r='${this.circles[i].radius}' stroke='${this.circles[i].color}' stroke-width='${this.circles[i].lineWidth}' fill-opacity='0' />`;
             }
         }
 
