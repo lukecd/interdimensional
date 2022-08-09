@@ -21,7 +21,7 @@ class GenerativeSpaceRenderer extends Renderer {
         const numOrbits = this.randomIntFromRange(numPlanets+1, numPlanets*1.6);
         this.orbits = this.bresenhamEuclidean(numPlanets, numOrbits);
         this.circles = [];
-        this.shouldReveal = false;
+        this.shouldReveal = true;
 
         this.colorAlpha = 1;
 
@@ -140,17 +140,17 @@ class GenerativeSpaceRenderer extends Renderer {
         }
 
         // //then cover it up
-        // if(this.shouldReveal && this.colorAlpha > 0) {
-        //     this.ctx.fillStyle = this.bgColor;
-        //     this.ctx.globalAlpha = this.colorAlpha;
-        //     this.ctx.fillRect(0, 0, this.width, this.height);
-        //     this.colorAlpha -= 0.01;
-        //     this.ctx.globalAlpha = 1;
-        // }
-        // if(!this.shouldReveal) {
-        //     this.ctx.fillStyle = this.bgColor;
-        //     this.ctx.fillRect(0, 0, this.width, this.height);  
-        // }
+        if(this.shouldReveal && this.colorAlpha > 0) {
+            this.ctx.fillStyle = this.bgColor;
+            this.ctx.globalAlpha = this.colorAlpha;
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.colorAlpha -= 0.01;
+            this.ctx.globalAlpha = 1;
+        }
+        if(!this.shouldReveal) {
+            this.ctx.fillStyle = this.bgColor;
+            this.ctx.fillRect(0, 0, this.width, this.height);  
+        }
 
         requestAnimationFrame(this.animate.bind(this));
     }
@@ -191,8 +191,12 @@ class GenerativeSpaceRenderer extends Renderer {
     /**
      * @notice converts the current point array to SVG data
      */
+
+    // TODO CHANGE " " to ''
     toSVG() {
-        let svgVersion = `<svg height="400" width="400" style="background-color:${this.bgColor}">`;
+        //'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 800 800">'
+
+        let svgVersion = `<svg height='400' width="400" style="background-color:${this.bgColor}">`;
 
         for(let i=0; i<this.circles.length; i++) {
             if(this.circles[i].fill) {

@@ -8,6 +8,7 @@ import Mint from "./pages/Mint";
 import Mixer from "./pages/Mixer";
 import About from "./pages/About";
 import Canvas from "./Player/Canvas";
+import DotRenderer from './pages/DotRenderer';
 
 const App = () => {
     const [play, setPlay] = useState(false);

@@ -3,9 +3,10 @@ import * as Tonal from "@tonaljs/tonal";
 import SoundSource from "./SoundSource";
 
 class RhythmSource extends SoundSource {
-    constructor(player, conductor, performerInstrument) {
+    constructor(player, conductor, performerInstrument, soundFiles) {
         super(player, conductor);
         this.performerInstrument = performerInstrument;
+        this.soundFiles = soundFiles;
         super.setType('rhythm');
     }
 
@@ -17,43 +18,8 @@ class RhythmSource extends SoundSource {
         const autoPanner = new Tone.AutoPanner("4n").toDestination().start();
         const delay = new Tone.FeedbackDelay('8n.', 0.5).toDestination();
 
-        if(this.performerInstrument === 'mallet-marimba') {
-            this.sampler = new Tone.Sampler({
-                urls: {
-                    C3: "mallet-marimba-C3.mp3",
-                    D3: "mallet-marimba-D3.mp3",
-                    E3: "mallet-marimba-E3.mp3",
-                    F3: "mallet-marimba-F3.mp3",
-                    G3: "mallet-marimba-G3.mp3",
-                    A3: "mallet-marimba-A3.mp3",
-                    B3: "mallet-marimba-B3.mp3",
-                },
-                baseUrl: "/audio/mallets/mallet-marimba/",
-                envelope: {
-                    attack: .25,
-                    release: 2
-                }
-            });
- 
-        }
-        else if(this.performerInstrument === 'mallet-mellow') {
-            this.sampler = new Tone.Sampler({
-                urls: {
-                    C3: "mallet-mellow-C3.mp3",
-                    D3: "mallet-mellow-D3.mp3",
-                    E3: "mallet-mellow-E3.mp3",
-                    F3: "mallet-mellow-F3.mp3",
-                    G3: "mallet-mellow-G3.mp3",
-                    A3: "mallet-mellow-A3.mp3",
-                    B3: "mallet-mellow-B3.mp3",
-                },
-                baseUrl: "/audio/mallets/mallet-mellow/",
-                envelope: {
-                    attack: .25,
-                    release: 2
-                }
-            });
-        }
+        this.sampler = new Tone.Sampler(this.soundFiles);
+
         // this.sampler.connect(delay);
         // delay.connect(autoPanner);
         this.sampler.volume.value = -5;

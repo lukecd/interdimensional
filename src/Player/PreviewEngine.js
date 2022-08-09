@@ -14,21 +14,21 @@ import SoundControl from "./SoundControl";
  */
 class PreviewEngine extends SoundControl {
 
-    constructor(performerType, performerInstrument) {
+    constructor(performerType, performerInstrument, soundFiles) {
         super();
         this.soundSource = null;
         this.previewRhythm = this.bresenhamEuclidean(6, 8);
   
         if(performerType === 'drone') {
-            this.soundSource = new DroneSource(null, this);
+            this.soundSource = new DroneSource(null, this, soundFiles);
             this.soundSource.init(this.getMidNote(-14,  this.scaleNotes));
         }
         else if(performerType === 'pad') {
-            this.soundSource = new PadSource(null, this, performerInstrument); 
+            this.soundSource = new PadSource(null, this, performerInstrument, soundFiles); 
             this.soundSource.init(this.scaleNotes);
         }
         else if(performerType === 'rhythm') {
-            this.soundSource = new RhythmSource(null, this, performerInstrument);
+            this.soundSource = new RhythmSource(null, this, performerInstrument, soundFiles);
             this.soundSource.init(this.scaleNotes);
         }
     }

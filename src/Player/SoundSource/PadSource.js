@@ -3,35 +3,18 @@ import * as Tonal from "@tonaljs/tonal";
 import SoundSource from "./SoundSource";
 
 class PadSource extends SoundSource {
-    constructor(player, conductor, performerInstrument) {
+    constructor(player, conductor, performerInstrument, soundFiles) {
         super(player, conductor);
         this.performerInstrument = performerInstrument;
+        this.soundFiles = soundFiles;
         super.setType('pad');
     }
 
     init(scaleNotes) {
-        //todo: build big ass if to load different instruments based on performerInstrument
-        this.sampler = new Tone.Sampler({
-            urls: {
-                C3: "pad-e-canyon-C3.mp3",
-                D3: "pad-e-canyon-D3.mp3",
-                E3: "pad-e-canyon-E3.mp3",
-                F3: "pad-e-canyon-F3.mp3",
-                G3: "pad-e-canyon-G3.mp3",
-                A3: "pad-e-canyon-A3.mp3",
-                B3: "pad-e-canyon-B3.mp3",
-            },
-            baseUrl: "/audio/pads/pad-canyon/",
-            envelope: {
-                attack: 1,
-                release: 4
-            }
-        });
+        this.sampler = new Tone.Sampler(this.soundFiles);
         this.sampler.volume.value = -15;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.PingPongDelay("4n", 0.2);
-      
-        var vol = new Tone.Volume();
     
         // Example of LFO for volume.
         this.sampler.chain(delay, verb);

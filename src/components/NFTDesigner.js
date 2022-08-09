@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import GenerativeSpaceRenderer from "../Player/Renderer/GenerativeSpaceRenderer"
+import GenerativeSpaceRenderer from "../Player/Renderer/GenerativeSpaceRenderer";
 import { ColorPicker, useColor } from "react-color-palette";
 
 const NFTDesigner = () => {

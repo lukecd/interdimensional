@@ -62,9 +62,7 @@ const Mint = () => {
 
         <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>
           <h1 className='text-3xl align-center font-heading bg-primary'>1. Pick A Color</h1>
-
               <NFTDesigner type="drone" />
-
         </div>
 
           <div className='flex flex-col pl-3 pr-3 pb-3  bg-background border-8 border-primary '>

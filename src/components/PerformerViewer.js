@@ -24,7 +24,7 @@ const PerformerViewer = (props) => {
   let [previewEngine, setPreviewEngine] = useState(null);
   let [isPreviewing, setIsPreviewing] = useState(false);
 
-  const { data: curNFT } = useContractRead({
+  let { data: curNFT } = useContractRead({
     addressOrName: window.$CONTRACT_ADDRESS,
     contractInterface: contractABI,
     functionName: "getTokenURI",
@@ -33,15 +33,18 @@ const PerformerViewer = (props) => {
   });
 
   useEffect(() => {
-    if (curNFT) {
+    if (curNFT) {      
       const beginning = "data:application/json;base64,";
-      let decode = curNFT.substring(beginning.length)
-      decode = atob(decode);
-      let nftOBJ = JSON.parse(decode);
+      let decode = curNFT.substring(beginning.length);
 
+      decode = atob(decode);
+      console.log("decode ", decode);
+      let nftOBJ = JSON.parse(decode);
+      console.log("nftOBJ ", nftOBJ);
+      console.log("nftOBJ ", nftOBJ.image);
       setImgURL(nftOBJ.image);
-      setPerformerType(nftOBJ.performerType);
-      setPerformerInstrument(nftOBJ.performerInstrument);
+      setPerformerType(nftOBJ.part);
+      setPerformerInstrument(nftOBJ.instrument);
       setPerformerData(nftOBJ.performerData);
 
       // hacky code because of how JS deals with booleans and strings
@@ -73,7 +76,6 @@ const PerformerViewer = (props) => {
   return (
     <div className="flex flex-col bg-secondary">
       <img src={imgURL} />
-
       {(shouldShowPrice && (
       <div className="flex flex-row justify-end">
         <span className="bg-secondary font-info text-xl mt-2 mr-2">Price {formattedPrice} MATIC</span>

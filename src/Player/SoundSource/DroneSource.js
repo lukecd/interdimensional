@@ -4,7 +4,7 @@ import SoundSource from "./SoundSource";
 
 class DroneSource extends SoundSource {
 
-    constructor(player, conductor) {
+    constructor(player, conductor, soundFiles) {
         super(player, conductor);
         super.setType('drone');
     }

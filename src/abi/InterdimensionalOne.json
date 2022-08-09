@@ -120,28 +120,20 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "name": "executeSale",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "generateDesign",
+    "name": "collectionIdToCollection",
     "outputs": [
       {
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
         "internalType": "string",
-        "name": "",
+        "name": "name",
         "type": "string"
       }
     ],
@@ -149,70 +141,74 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getAllNFTs",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "collectionIdToPrototypes",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "primaryColor",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "secondaryColor",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "performerType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "performerInstrument",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "performerData",
-            "type": "string"
-          },
-          {
-            "internalType": "address payable",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address payable",
-            "name": "seller",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "currentlyListed",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct InterdimensionalOne.Performer[]",
-        "name": "",
-        "type": "tuple[]"
+        "internalType": "uint256",
+        "name": "prototypeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "editionSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentlyMinted",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "color",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "part",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "instrument",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "soundFiles",
+        "type": "string"
+      },
+      {
+        "internalType": "address payable",
+        "name": "owner",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -239,7 +235,32 @@
   },
   {
     "inputs": [],
-    "name": "getMyNFTs",
+    "name": "getCollections",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "collectionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct InterdimensionalOne.Collection[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMyNFTS",
     "outputs": [
       {
         "components": [
@@ -249,34 +270,14 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "editionId",
+            "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "primaryColor",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "secondaryColor",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "performerType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "performerInstrument",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "performerData",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "prototypeId",
+            "type": "uint256"
           },
           {
             "internalType": "address payable",
@@ -297,9 +298,90 @@
             "internalType": "bool",
             "name": "currentlyListed",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "svgData",
+            "type": "string"
           }
         ],
-        "internalType": "struct InterdimensionalOne.Performer[]",
+        "internalType": "struct InterdimensionalOne.NFT[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPrototypesForCollectionId",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "prototypeId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "collectionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "editionSize",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentlyMinted",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "color",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "part",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "instrument",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "soundFiles",
+            "type": "string"
+          },
+          {
+            "internalType": "address payable",
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct InterdimensionalOne.Prototype[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -353,43 +435,96 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "prototypeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "svgData",
+        "type": "string"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "collectioName",
+        "type": "string"
+      }
+    ],
+    "name": "mintCollection",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "editionSize",
+        "type": "uint256"
+      },
+      {
         "internalType": "string",
         "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "pColor",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "sColor",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "pType",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "pInstrument",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "pData",
         "type": "string"
       },
       {
         "internalType": "uint256",
         "name": "price",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "color",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "part",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "instrument",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "soundFiles",
+        "type": "string"
+      },
+      {
+        "internalType": "address payable",
+        "name": "owner",
+        "type": "address"
       }
     ],
-    "name": "mint",
-    "outputs": [],
+    "name": "mintPrototype",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -419,6 +554,134 @@
       {
         "internalType": "address",
         "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "ownerToNFTs",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "editionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "prototypeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address payable",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "seller",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "currentlyListed",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "svgData",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "prototypeIdToPrototype",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "prototypeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "editionSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentlyMinted",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "color",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "part",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "instrument",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "soundFiles",
+        "type": "string"
+      },
+      {
+        "internalType": "address payable",
+        "name": "owner",
         "type": "address"
       }
     ],
@@ -534,7 +797,7 @@
         "type": "uint256"
       }
     ],
-    "name": "tokenIDToPerformer",
+    "name": "tokenIdToNFT",
     "outputs": [
       {
         "internalType": "uint256",
@@ -542,34 +805,14 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "editionId",
+        "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "primaryColor",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "secondaryColor",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "performerType",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "performerInstrument",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "performerData",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "prototypeId",
+        "type": "uint256"
       },
       {
         "internalType": "address payable",
@@ -590,6 +833,11 @@
         "internalType": "bool",
         "name": "currentlyListed",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "svgData",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -633,6 +881,24 @@
       }
     ],
     "name": "transferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "prototypeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "soundFiles",
+        "type": "string"
+      }
+    ],
+    "name": "updateSoundFilesForPrototypeId",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
