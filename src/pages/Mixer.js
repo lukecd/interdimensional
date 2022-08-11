@@ -11,15 +11,15 @@ import {
 import { ethers } from "ethers";
 import chroma from "chroma-js";
 import contractABI from '../abi/InterdimensionalOne.json';
-import PerformerViewer from "../components/PerformerViewer";
+import NFTViewer from "../components/NFTViewer";
 import VolumeSlider from "../components/VolumeSlider";
 import { isLabelWithInternallyDisabledControl } from "@testing-library/user-event/dist/utils";
 
 const Mixer = (props) => {
-  let [nfts, setNFTs] = useState([]);
-  let [droneNFTs, setDroneNFTs] = useState([]);
-  let [padNFTs, setPadNFTs] = useState([]);
-  let [rhythmNFTs, setRhythmNFTs] = useState([]);
+  const [nfts, setNFTs] = useState([]);
+  const [droneNFTs, setDroneNFTs] = useState([]);
+  const [padNFTs, setPadNFTs] = useState([]);
+  const [rhythmNFTs, setRhythmNFTs] = useState([]);
 
   const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
 
@@ -59,7 +59,6 @@ const Mixer = (props) => {
   }, [signer]);
 
   const prototypeIdToType = (prototypeId) => {
-    console.log("allPrototypes ", allPrototypes)
     if(allPrototypes) {
       for(let i=0; i<allPrototypes.length; i++) {
         if(allPrototypes[i].prototypeId == prototypeId) return allPrototypes[i].part;
@@ -72,7 +71,6 @@ const Mixer = (props) => {
   const layoutNFTs = async (myNFTs) => {
     window.$PERFORMING_NFTs = nfts;
     window.$PROTOTYPES = allPrototypes;
-    console.log("layoutNFTs ", myNFTs);
     let drones = [];
     let pads = [];
     let rhythms = [];
@@ -92,21 +90,6 @@ const Mixer = (props) => {
     setDroneNFTs(drones);
     setPadNFTs(pads);
     setRhythmNFTs(rhythms);
-    // // break my NFTs into different categories
-    // let drones = nfts.filter(function (nft) {
-    //   return nft.performerType === 'drone'
-    // })
-    // setDroneNFTs(drones);
-
-    // let pads = nfts.filter(function (nft) {
-    //   return nft.performerType === 'pad'
-    // })
-    // setPadNFTs(pads);
-
-    // let rhythms = nfts.filter(function (nft) {
-    //   return nft.performerType === 'rhythm'
-    // })
-    // setRhythmNFTs(rhythms);
   }
 
   /**
@@ -114,11 +97,7 @@ const Mixer = (props) => {
    * @returns The amount of ADAMS tokens currently staked
    */
   const getMyNFTS = async () => {
-    console.log("myNFTs isSignerError", isSignerError);
-    console.log("myNFTs signer", signer);
-    console.log("myNFTs contractSigner", contractSigner);
     let myNFTs = await contractSigner.getMyNFTS();
-    console.log("myNFTs ", myNFTs);
     setNFTs(myNFTs);
     layoutNFTs(myNFTs);
   }
@@ -132,7 +111,7 @@ const Mixer = (props) => {
           <VolumeSlider type="drone" play={props.play}/>
           {droneNFTs.map(nft => {
             return (
-              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false"/>
+              <NFTViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false"/>
             );
           })}
         </div>
@@ -142,7 +121,7 @@ const Mixer = (props) => {
           <VolumeSlider type="pad" play={props.play}/>
           {padNFTs.map(nft => {
             return (
-              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false"/>
+              <NFTViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false"/>
             );
           })}
 
@@ -153,7 +132,7 @@ const Mixer = (props) => {
           <VolumeSlider type="rhythm" play={props.play}/>
           {rhythmNFTs.map(nft => {
             return (
-              <PerformerViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false" />
+              <NFTViewer key={nft.tokenId.toString()} tokenId={nft.tokenId.toString()} showPrice="false" />
             );
           })}
 

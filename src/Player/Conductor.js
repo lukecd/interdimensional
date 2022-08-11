@@ -118,6 +118,7 @@ class Conductor extends SoundControl {
     }
 
     pause() {
+
         this.isPlaying = false;
         Tone.Transport.pause();
         if(this.dronePerformer) this.dronePerformer.pause();

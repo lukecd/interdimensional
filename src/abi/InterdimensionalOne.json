@@ -290,16 +290,6 @@
             "type": "address"
           },
           {
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "currentlyListed",
-            "type": "bool"
-          },
-          {
             "internalType": "string",
             "name": "svgData",
             "type": "string"
@@ -447,7 +437,7 @@
     ],
     "name": "mint",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -599,16 +589,6 @@
         "internalType": "address payable",
         "name": "seller",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "currentlyListed",
-        "type": "bool"
       },
       {
         "internalType": "string",
@@ -823,16 +803,6 @@
         "internalType": "address payable",
         "name": "seller",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "currentlyListed",
-        "type": "bool"
       },
       {
         "internalType": "string",

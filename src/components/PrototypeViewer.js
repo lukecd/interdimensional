@@ -5,6 +5,8 @@ import {
   useContractWrite,
   useContractRead,
   useWaitForTransaction,
+  useSigner,
+  useContract
 } from "wagmi";
 import { ethers } from "ethers";
 import chroma from "chroma-js";
@@ -29,6 +31,16 @@ const PrototypeViewer = (props) => {
   let [instrument, setInstrument] = useState("");
   let [soundFiles, setSoundFiles] = useState("");
 
+  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+
+  // contract signer, used to get all NFTs for a user.
+  // i'm using this and not useContractRead as I need msg.sender inside the contract to point back to me
+  const contractSigner = useContract({
+    addressOrName: window.$CONTRACT_ADDRESS,
+    contractInterface: contractABI,
+    signerOrProvider: signer,
+  });  
+
   const {
     data: mintData,
     write: mint,
@@ -39,6 +51,7 @@ const PrototypeViewer = (props) => {
     addressOrName: window.$CONTRACT_ADDRESS,
     contractInterface: contractABI,
     functionName: "mint",
+    overrides: {value: ethers.utils.parseEther(".024"), gasLimit: 1000000},
   });
 
   useEffect(() => {
@@ -50,8 +63,10 @@ const PrototypeViewer = (props) => {
     setInstrument(props.prototype.instrument);
 
     let sounds = props.prototype.soundFiles.toString();
-    sounds = ethers.utils.toUtf8String(sounds);
-    let soundOBJ = JSON.parse(sounds);
+    console.log("sounds ", sounds)
+    //sounds = ethers.utils.toUtf8String(sounds);
+    let soundOBJ = JSON.parse(sounds.trim());
+    console.log("soundOBJ ", soundOBJ)
     setSoundFiles(soundOBJ);
   }, []);
 
@@ -66,33 +81,32 @@ const PrototypeViewer = (props) => {
   }, [canvasName]);
 
   const playPreview = () => {
-    console.log("playPreview CALLED")
     const preview = new PreviewEngine(part, instrument, soundFiles);
-    console.log("created preview ", preview);
     preview.play();
     setPreviewEngine(preview);
     setIsPreviewing(true);
   }
 
   const pausePreview = () => {
-    console.log("pausePreview CALLED")
       previewEngine.pause();
       setIsPreviewing(false);
       setPreviewEngine(null);
   }
 
   const mintNFT = async () => {
-    console.log("mintNFT called")
     var canvas = document.getElementById(canvasName);
     if(canvas) {
       var ctx = canvas.getContext("2d");
       const renderer = new GenerativeSpaceRenderer(0, 0, 400, 400, props.prototype.color, ctx);
-      console.log("prototypeId=", prototypeId);
-      console.log("renderer.toSVG()=", renderer.toSVG());
-      
-      await mint({args: [prototypeId, renderer.toSVG()]});
+
+      await contractSigner.mint(prototypeId, renderer.toSVG(), { value: props.prototype.price.toString(), gasLimit: 6000000 })
+      .then( returnValue => {console.log("mint success ", returnValue)})
+      .catch(error => console.log("error on mint...", error.reason))
+
+      console.log("calling Mint")
+      //await mint({args: [prototypeId, renderer.toSVG()]});
+      console.log("mintError ", mintError)
     }
-    console.log("function ended")
   }
 
 
