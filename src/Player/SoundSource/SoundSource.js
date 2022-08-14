@@ -60,5 +60,20 @@ class SoundSource {
         
     }
 
+    randomIntFromRange(min, max) {
+        return Math.floor(Math.random() * (max-min +1) + min);
+    }
+
+    /**
+     * 
+     * @notice Helper function to map one scale to another
+     * Currently used to make circles smaller as they move away from the center
+     */
+    scale (number, inMin, inMax, outMin, outMax) {
+        return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+
+
+
 }
 export default SoundSource;

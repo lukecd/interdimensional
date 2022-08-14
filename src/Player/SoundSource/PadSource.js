@@ -25,21 +25,14 @@ class PadSource extends SoundSource {
      * @notice Recursive function called over and over to create our evolving pad
      */
      evolvePad(time) {
-        console.log("PadSource evolvePad 1");
-
         if(this.paused) return;
-        console.log("PadSource evolvePad 2");
+
         this.currentChord = this.conductor.getNewChord();
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
-        // console.log('time ', time)
-        // console.log('this.currentChord ', this.currentChord);
-        console.log('evolve pad this.sampler.volume.value=', this.sampler.volume.value)
 
         this.sampler.triggerAttackRelease(this.currentChord, duration, time);
-        //this.conductor.notePlayed(this);
         this.transportId = Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);
-        console.log("this.transportId=", this.transportId);
 
         // always check if we have a Conductor. It's possible to not have one during preview
         if(this.conductor) Tone.Draw.schedule(this.conductor.notePlayed(this), '+' + duration);

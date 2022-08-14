@@ -7,7 +7,7 @@ import Conductor from '../Conductor.js';
 import DroneSource from '../SoundSource/DroneSource.js';
 import PadSource from '../SoundSource/PadSource.js';
 import RhythmSource from '../SoundSource/RhythmSource.js';
-
+import AtmosphereSource from '../SoundSource/AtmosphereSource.js';
 import Performer from '../Performer/Performer.js';
 import DronePerformer from '../Performer/DronePerformer.js';
 import PadPerformer from '../Performer/PadPerformer.js';
@@ -66,7 +66,23 @@ class DotOrchestra extends Renderer {
         x = Math.random() * (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
         y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
         // pad next
-        let padSoundSource = new PadSource(this, this.conductor, 'pad-canyon');
+        let padSoundFiles = {
+            urls: {
+                C3: "pad-e-canyon-C3.mp3",
+                D3: "pad-e-canyon-D3.mp3",
+                E3: "pad-e-canyon-E3.mp3",
+                F3: "pad-e-canyon-F3.mp3",
+                G3: "pad-e-canyon-G3.mp3",
+                A3: "pad-e-canyon-A3.mp3",
+                B3: "pad-e-canyon-B3.mp3",
+            },
+            baseUrl: "/audio/pads/pad-canyon/",
+            envelope: {
+                attack: 1,
+                release: 4
+            }
+        };
+        let padSoundSource = new PadSource(this, this.conductor, 'pad-canyon', padSoundFiles);
         let padPerformer = new PadPerformer(x, 
                                             y,
                                             this.performerRadius,
@@ -78,7 +94,24 @@ class DotOrchestra extends Renderer {
         this.performers.push(padPerformer);
         this.conductor.registerActor(padPerformer);     
         
-        let rhythmSource1 = new RhythmSource(this, this.conductor, 'mallet-marimba');
+        // rhytms
+        let rhythmSoundFiles1 = {
+            urls: {
+                C3: "mallet-marimba-C3.mp3",
+                D3: "mallet-marimba-D3.mp3",
+                E3: "mallet-marimba-E3.mp3",
+                F3: "mallet-marimba-F3.mp3",
+                G3: "mallet-marimba-G3.mp3",
+                A3: "mallet-marimba-A3.mp3",
+                B3: "mallet-marimba-B3.mp3",
+            },
+            baseUrl: "/audio/mallets/mallet-marimba/",
+            envelope: {
+                attack: .25,
+                release: 2
+            }
+        };
+        let rhythmSource1 = new RhythmSource(this, this.conductor, 'mallet-marimba', rhythmSoundFiles1);
         let rhythmPerformer1 = new RhythmPerformer(x, 
                                                    y,
                                                    this.performerRadius,
@@ -88,8 +121,23 @@ class DotOrchestra extends Renderer {
                                                    rhythmSource1);   
         this.performers.push(rhythmPerformer1);
         this.conductor.registerActor(rhythmPerformer1); 
-
-        let rhythmSource2 = new RhythmSource(this, this.conductor, 'mallet-mellow');
+        
+        let rhythmSoundFiles2 = {
+            urls: {
+                C3: "mallet-mellow-C3.mp3",
+                D3: "mallet-mellow-D3.mp3",
+                E3: "mallet-mellow-E3.mp3",
+                F3: "mallet-mellow-F3.mp3",
+                G3: "mallet-mellow-G3.mp3",
+                A3: "mallet-mellow-A3.mp3",
+                B3: "mallet-mellow-B3.mp3",
+            },
+            baseUrl: "/audio/mallets/mallet-mellow/",
+            envelope: {
+                attack: .25,
+                release: 2
+        }};
+        let rhythmSource2 = new RhythmSource(this, this.conductor, 'mallet-mellow', rhythmSoundFiles2);
         let rhythmPerformer2 = new RhythmPerformer(x, 
                                                    y,
                                                    this.performerRadius,
@@ -98,8 +146,11 @@ class DotOrchestra extends Renderer {
                                                    this.engine,
                                                    rhythmSource2);   
         this.performers.push(rhythmPerformer2);
-        this.conductor.registerActor(rhythmPerformer2);     
-        
+        this.conductor.registerActor(rhythmPerformer2);   
+          
+        this.atmosphereSource = new AtmosphereSource(this, this.conductor);
+        this.conductor.registerAtmosphere(this.atmosphereSource);     
+
         this.conductor.play();
         window.$music_playing = true;
     }
@@ -195,7 +246,8 @@ class DotOrchestra extends Renderer {
                 this.conductor.registerActor(rhythmPerformer2);     
             }
         }
-
+        this.atmosphereSource = new AtmosphereSource(this, this.conductor);
+        this.conductor.registerAtmosphere(this.atmosphereSource);     
         this.conductor.play();
         window.$music_playing = true;
     }

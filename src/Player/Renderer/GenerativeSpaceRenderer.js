@@ -28,30 +28,14 @@ class GenerativeSpaceRenderer extends Renderer {
         this.animate();
     }
 
-    setupEvents() {
-        const self = this;
-
-        document.addEventListener("mousemove",  function (e) {
-            // TODO
-        }, false)
-
-        document.addEventListener("click",  function (e) {
-            // TODO
-        }, false)
-    }
-
-    getXY(canvas, event){ //adjust mouse click to canvas coordinates
-        const rect = this.ctx.canvas.getBoundingClientRect()
-        const y = event.clientY - rect.top
-        const x = event.clientX - rect.left
-        return {x:x, y:y}
-    }
-
     resize() {
         this.width =  window.innerWidth;
         this.height =  window.innerHeight;
     }
 
+    /**
+     * @notice Initial setup
+     */
     init() {
         // the "sun"
         this.circles.push({
@@ -105,6 +89,10 @@ class GenerativeSpaceRenderer extends Renderer {
 
     }
 
+    /**
+     * 
+     * @notice Main animation loop. Called ~60x a second
+     */
     animate(time) {
         this.ctx.fillStyle = this.bgColor;
         this.ctx.fillRect(0, 0, this.width, this.height);
@@ -138,7 +126,7 @@ class GenerativeSpaceRenderer extends Renderer {
             }
         }
 
-        // //then cover it up
+        // then cover it up ... or slowly reveal
         if(this.shouldReveal && this.colorAlpha > 0) {
             this.ctx.fillStyle = this.bgColor;
             this.ctx.globalAlpha = this.colorAlpha;
@@ -154,7 +142,9 @@ class GenerativeSpaceRenderer extends Renderer {
         requestAnimationFrame(this.animate.bind(this));
     }
 
-
+    /**
+     * @notice At launch we cover the design with a solid color, then we slowly fade that away.
+     */
     beginReveal() {
         this.shouldReveal = true;
     }
@@ -163,6 +153,8 @@ class GenerativeSpaceRenderer extends Renderer {
     * @notice Helper method to generate euclidean rhythms using the Bresenham Line method
     * Based on code in https://medium.com/code-music-noise/euclidean-rhythms-391d879494df
     * Returns an array representing a binary sequence. Play on a 1, rest on a 0.
+    * 
+    * This is the same alrorithm I use to generate rhythms, realized it works well to create visuals too
     */
     bresenhamEuclidean(onsets, totalPulses) {
         let previous = null;
@@ -188,10 +180,8 @@ class GenerativeSpaceRenderer extends Renderer {
     } 
 
     /**
-     * @notice converts the current point array to SVG data
+     * @notice converts the current design array to SVG data
      */
-
-    // TODO CHANGE " " to ''
     toSVG() {
         let svgVersion =  `<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' viewBox='0 0 400 400' style='background-color:${this.bgColor}'>`;
 
@@ -209,8 +199,6 @@ class GenerativeSpaceRenderer extends Renderer {
         svgVersion += '</svg>';
         return svgVersion;
     }
-
-
 }
 
 export default GenerativeSpaceRenderer;

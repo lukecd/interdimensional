@@ -14,16 +14,23 @@ const VolumeSlider = (props) => {
         if(window.$CONDUCTOR) {
             setDisabled(false);
             if(props.type === 'drone') {
-                const defaultVol = scale(window.$CONDUCTOR.dronePerformer.soundSource.getVolume(), -60, 0, 0, 110)
-                setCurVol(defaultVol);
+                if(window.$CONDUCTOR.dronePerformer) {
+                    const defaultVol = scale(window.$CONDUCTOR.dronePerformer.soundSource.getVolume(), -60, 0, 0, 110)
+                    setCurVol(defaultVol);
+                }
             }
             else if(props.type === 'pad') {
-                const defaultVol = scale(window.$CONDUCTOR.padPerformer.soundSource.getVolume(), -60, 0, 0, 110)
-                setCurVol(defaultVol);
+                if(window.$CONDUCTOR.padPerformer) {
+                    const defaultVol = scale(window.$CONDUCTOR.padPerformer.soundSource.getVolume(), -60, 0, 0, 110)
+                    setCurVol(defaultVol);
+                }
             }
             else if(props.type === 'rhythm') {
-                const defaultVol = scale(window.$CONDUCTOR.rhythmPerformer1.soundSource.getVolume(), -60, 0, 0, 110)
-                setCurVol(defaultVol);
+                if(window.$CONDUCTOR.rhythmPerformer1) {
+                    const defaultVol = scale(window.$CONDUCTOR.rhythmPerformer1.soundSource.getVolume(), -60, 0, 0, 110)
+                    setCurVol(defaultVol);
+                }
+
             }
         }
 
