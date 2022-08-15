@@ -31,15 +31,13 @@ class PadSource extends SoundSource {
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
 
-        this.sampler.triggerAttackRelease(this.currentChord, duration, time);
-        this.transportId = Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);
+        if(this.sampler.loaded) {
+            this.sampler.triggerAttackRelease(this.currentChord, duration, time);
+            this.transportId = Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);    
+        }
 
         // always check if we have a Conductor. It's possible to not have one during preview
         if(this.conductor) Tone.Draw.schedule(this.conductor.notePlayed(this), '+' + duration);
-        // const self = this;
-        // Tone.Draw.schedule(function(){
-        //     self.conductor.notePlayed(self);
-        // }, '+' + duration)
     }   
 
     /**
@@ -49,27 +47,7 @@ class PadSource extends SoundSource {
         this.paused = false;
         console.log("PadSource play");
         Tone.Transport.schedule(this.evolvePad.bind(this), "1");
-        // Tone.Draw.schedule(function(){
-        //     this.conductor.notePlayed(this);
-        // }, '1')
-                // const self = this;
-        // console.log("PadSource pla2y")
-
-        // Tone.Transport.schedule(function(time){
-        //     console.log("in schedule ", self)
-        //     self.currentChord = self.nextChord;
-        //     let duration = Math.floor(Math.random() * 4) + 1;
-        //     duration += 'm';
-        //     self.sampler.triggerAttackRelease(self.chords[self.currentChord], duration, time);
-        //     self.conductor.notePlayed(self);
-        //     self.nextChord = Math.floor(Math.random() * self.chords.length);
-        //     //use the time argument to schedule a callback with Tone.Draw
-        //     // Tone.Draw.schedule(function(){
-        //     //     self.conductor.notePlayed(self);
-        //     // }, time);
-        //     Tone.Transport.schedule(self.play, '+' + duration);
-        // }, "+0.5")
-
+    
     }
 
     pause() {

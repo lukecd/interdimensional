@@ -49,14 +49,15 @@ class RhythmSource extends SoundSource {
             motifArray.push(noteIndex);
 
             if(this.conductor.shouldPlay(this)) {
-                // TODO: I'm not sure about this logic. 
-                let note = this.conductor.getMidNote(noteIndex, chordNotes);
-                //console.log('sampler vol: ',sampler.volume.value);
-                this.sampler.triggerAttackRelease(note, this.duration, time);
-                //this.conductor.notePlayed(this);
-                Tone.Draw.schedule(this.conductor.notePlayed(this), time);
+                if(this.sampler.loaded) {
+                    // TODO: I'm not sure about this logic. 
+                    let note = this.conductor.getMidNote(noteIndex, chordNotes);
+                    //console.log('sampler vol: ',sampler.volume.value);
+                    this.sampler.triggerAttackRelease(note, this.duration, time);
+                    //this.conductor.notePlayed(this);
+                    Tone.Draw.schedule(this.conductor.notePlayed(this), time);
+                }
             }
-
         }, this.tempo).start();
         this.loop.humanize = true;
     }

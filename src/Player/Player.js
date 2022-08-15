@@ -57,9 +57,16 @@ class Player {
      * @param {*} shouldDemo True if we should launch in demo mode
      */
     launchApp(shouldDemo) {
-        console.log("B player setting this.play=", this.play)
+        // reset gravity
+        this.engine.gravity.scale = 0.004;
+        this.engine.gravity.x = 0.0;
+        this.engine.gravity.y = 0.0;
+        this.engine.frictionAir = 0;
+        this.engine.frictionStatic = 0;
+        this.engine.inertia = Infinity;
+        this.engine.restitution = 1;
+
         this.setPlay(true);
-        console.log("A player setting this.play=", this.play)
         this.renderer = new DotOrchestra(0, 0, this.width, this.height, this.ctx, this.bgColor, 
                                          this.colors, this.engine, shouldDemo, this.play, this.setPlay);
     }
