@@ -36,6 +36,11 @@ class DotOrchestra extends Renderer {
         this.setupWalls();
         this.setupEvents();
 
+        this.droneSoundSource = null;
+        this.padSoundSource = null;
+        this.rhythmSource1 = null;
+        this.rhythmSource2 = null;
+
         this.performers  = [];
         this.particles = [];
         this.soundSources = [];
@@ -51,7 +56,7 @@ class DotOrchestra extends Renderer {
         let y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
 
         // drone first
-        let droneSoundSource = new DroneSource(this, this.conductor);
+        let droneSoundSource = new DroneSource(this.conductor);
         let dronePerformer = new DronePerformer(x, 
                                                 y,
                                                 this.performerRadius,
@@ -82,7 +87,7 @@ class DotOrchestra extends Renderer {
                 release: 4
             }
         };
-        let padSoundSource = new PadSource(this, this.conductor, 'pad-canyon', padSoundFiles);
+        let padSoundSource = new PadSource(this.conductor, 'pad-canyon', padSoundFiles);
         let padPerformer = new PadPerformer(x, 
                                             y,
                                             this.performerRadius,
@@ -111,7 +116,7 @@ class DotOrchestra extends Renderer {
                 release: 2
             }
         };
-        let rhythmSource1 = new RhythmSource(this, this.conductor, 'mallet-marimba', rhythmSoundFiles1);
+        let rhythmSource1 = new RhythmSource(this.conductor, 'mallet-marimba', rhythmSoundFiles1);
         let rhythmPerformer1 = new RhythmPerformer(x, 
                                                    y,
                                                    this.performerRadius,
@@ -137,7 +142,7 @@ class DotOrchestra extends Renderer {
                 attack: .25,
                 release: 2
         }};
-        let rhythmSource2 = new RhythmSource(this, this.conductor, 'mallet-mellow', rhythmSoundFiles2);
+        let rhythmSource2 = new RhythmSource(this.conductor, 'mallet-mellow', rhythmSoundFiles2);
         let rhythmPerformer2 = new RhythmPerformer(x, 
                                                    y,
                                                    this.performerRadius,
@@ -148,7 +153,7 @@ class DotOrchestra extends Renderer {
         this.performers.push(rhythmPerformer2);
         this.conductor.registerActor(rhythmPerformer2);   
           
-        this.atmosphereSource = new AtmosphereSource(this, this.conductor);
+        this.atmosphereSource = new AtmosphereSource(this.conductor);
         this.conductor.registerAtmosphere(this.atmosphereSource);     
 
         this.conductor.play();
@@ -172,26 +177,27 @@ class DotOrchestra extends Renderer {
         const nftContract = new ethers.Contract(window.$CONTRACT_ADDRESS, contractABI, signer);
         console.log("nftContract ", nftContract)
         let myNFTs = [];
-        try{ myNFTs = await nftContract.getMyNFTS(); }
-        catch(error) {console.log("error when querying for getMyNFTS ", error)}
+        while(myNFTs.length == 0) {
+            try{ myNFTs = await nftContract.getMyNFTS(); }
+            catch(error) {console.log("error when querying for getMyNFTS ", error)}
+        }
         console.log("curNFTs ", myNFTs);
 
         let myPrototypes = [];
-        try{ myPrototypes = await nftContract.getPrototypesForCollectionId(1); }
-        catch(error) {console.log("error when querying for allNFTs ", error)}
-        console.log("myPrototypes ", myPrototypes);
+        while(myPrototypes.length == 0) {
+            try{ myPrototypes = await nftContract.getPrototypesForCollectionId(1); }
+            catch(error) {console.log("error when querying for allNFTs ", error)}
+        }
 
         // not the best state mgmt, need to figure out better way
         // assign to a local variable first to make it easier to change later
         for(let i=0; i<myNFTs.length; i++) {
             const prototype = this.getPrototypePrototypeId(myNFTs[i].prototypeId.toString(), myPrototypes);
-            console.log("prototype ", prototype)
             const nftType = prototype.part;
             const soundFiles = prototype.soundFiles;
             const color = prototype.color;
             const instrument = prototype.instrument;
 
-            console.log("soundFiles ", soundFiles)
             let sounds = soundFiles.toString();
             // FOR SOME STRANGE ASS REASON, this string comes through as encoded when I get it from 
             // wagmi hooks and as plain text when I query it directly via ethers. 
@@ -200,53 +206,84 @@ class DotOrchestra extends Renderer {
             // will save me from banging my head against my desk too much ... maybe
             //sounds = ethers.utils.toUtf8String(sounds);
             let soundOBJ = JSON.parse(sounds);
-            console.log("soundOBJ ", soundOBJ)
             const x = Math.random() * (window.innerWidth-(2*this.performerRadius)) + (2*this.performerRadius);
             const y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
 
             if(nftType === 'drone') {
-                let droneSoundSource = new DroneSource(this, this.conductor, soundOBJ);
-                console.log("droneSoundSource=", droneSoundSource);
-                let dronePerformer = new DronePerformer(x, 
+                if(this.droneSoundSource) {
+                    this.droneSoundSource.addSoundFiles(soundOBJ, color);
+                }
+                else {
+                    this.droneSoundSource = new DroneSource(this.conductor, soundOBJ);
+                    let dronePerformer = new DronePerformer(x, 
+                                                            y,
+                                                            this.performerRadius,
+                                                            this.bgColor,
+                                                            color,
+                                                            this.ctx,
+                                                            this.engine,
+                                                            this.droneSoundSource);
+                    this.performers.push(dronePerformer);
+                    this.conductor.registerActor(dronePerformer);  
+                }
+ 
+            }
+            else if(nftType === 'pad') {
+                // if we already have the performer, just add a new source
+                if(this.padSoundSource) {
+                    this.padSoundSource.addSoundFiles(soundOBJ, color);
+                }
+                else {
+                    // first time through, create everything
+                    this.padSoundSource = new PadSource(this.conductor, instrument, soundOBJ, color);
+                    let padPerformer = new PadPerformer(x, 
                                                         y,
                                                         this.performerRadius,
-                                                        this.bgColor,
                                                         color,
                                                         this.ctx,
                                                         this.engine,
-                                                        droneSoundSource);
-                console.log("dronePerformer=", dronePerformer);
-                this.performers.push(dronePerformer);
-                this.conductor.registerActor(dronePerformer);   
-                console.log("registered actor");
-            }
-            else if(nftType === 'pad') {
-                let padSoundSource = new PadSource(this, this.conductor, instrument, soundOBJ);
-                let padPerformer = new PadPerformer(x, 
-                                                    y,
-                                                    this.performerRadius,
-                                                    color,
-                                                    this.ctx,
-                                                    this.engine,
-                                                    padSoundSource);
-                console.log('padPerformer ', padPerformer);                                       
-                this.performers.push(padPerformer);
-                this.conductor.registerActor(padPerformer);     
+                                                        this.padSoundSource);                                    
+                    this.performers.push(padPerformer);
+                    this.conductor.registerActor(padPerformer);     
+                }
+
             }
             else if(nftType === 'rhythm') {
-                let rhythmSource2 = new RhythmSource(this, this.conductor, instrument, soundOBJ);
-                let rhythmPerformer2 = new RhythmPerformer(x, 
-                                                           y,
-                                                           this.performerRadius,
-                                                           color,
-                                                           this.ctx,
-                                                           this.engine,
-                                                           rhythmSource2);   
-                this.performers.push(rhythmPerformer2);
-                this.conductor.registerActor(rhythmPerformer2);     
+                if(this.rhythmSource1) {
+                    this.rhythmSource1.addSoundFiles(soundOBJ, color);
+                }
+                if(this.rhythmSource2) {
+                    this.rhythmSource2.addSoundFiles(soundOBJ, color);
+                }
+
+                if(!this.rhythmSource1) {
+                    this.rhythmSource1 = new RhythmSource(this.conductor, instrument, soundOBJ);
+                    let rhythmPerformer = new RhythmPerformer(x, 
+                                                               y,
+                                                               this.performerRadius,
+                                                               color,
+                                                               this.ctx,
+                                                               this.engine,
+                                                               this.rhythmSource1);   
+                    this.performers.push(rhythmPerformer);
+                    this.conductor.registerActor(rhythmPerformer);     
+                }
+                else if(!this.rhythmSource2) {
+                    this.rhythmSource2 = new RhythmSource(this.conductor, instrument, soundOBJ);
+                    let rhythmPerformer = new RhythmPerformer(x, 
+                                                               y,
+                                                               this.performerRadius,
+                                                               color,
+                                                               this.ctx,
+                                                               this.engine,
+                                                               this.rhythmSource1);   
+                    this.performers.push(rhythmPerformer);
+                    this.conductor.registerActor(rhythmPerformer);     
+                }
+
             }
         }
-        this.atmosphereSource = new AtmosphereSource(this, this.conductor);
+        this.atmosphereSource = new AtmosphereSource(this.conductor);
         this.conductor.registerAtmosphere(this.atmosphereSource);     
         this.conductor.play();
         window.$music_playing = true;

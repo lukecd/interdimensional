@@ -1,24 +1,77 @@
 import * as Tone from "tone"
 import * as Tonal from "@tonaljs/tonal";
 import SoundSource from "./SoundSource";
+import chroma from "chroma-js";
 
 class PadSource extends SoundSource {
-    constructor(player, conductor, performerInstrument, soundFiles) {
-        super(player, conductor);
+    constructor(conductor, performerInstrument, soundFiles, color) {
+        super(conductor, soundFiles, color);
         this.performerInstrument = performerInstrument;
         this.soundFiles = soundFiles;
-        super.setType('pad');
+        this.setType('pad');
+
+        this.setCrossfadeA();
+        this.setCrossfadeB();
+    }
+
+    setCrossfadeA() {
+        // clear the old one
+        if(this.crossFade.a) this.crossFade.a.dispose();
+        this.idA = this.randomIntFromRange(0, this.soundFileSorces.length-1);
+
+        console.log("setting crossfade a=", this.soundFileSorces[this.idA]);
+        this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
+        this.samplerA.volume.value = -15;
+        const verb = new Tone.Reverb('2');
+        const delay = new Tone.Delay(1);
+        this.samplerA.chain(delay, verb);
+        verb.toDestination();
+        //this.samplerA.chain(delay, verb, this.crossFade.a);
+        this.samplerA.connect(this.crossFade.a);
+
+        // colors and stuff
+        this.idA = 0;
+        this.idB = 0;
+        this.updateColorArray();
+
+    }
+
+    setCrossfadeB() {
+        // clear the old one
+        if(this.crossFade.b) this.crossFade.b.dispose();
+        this.idB = this.randomIntFromRange(0, this.soundFileSorces.length-1);
+        console.log("setting crossfade b=", this.soundFileSorces[this.idB]);
+        this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
+
+        this.samplerB.volume.value = -15;
+        const verb = new Tone.Reverb('2');
+        const delay = new Tone.Delay(1);
+        this.samplerB.chain(delay, verb);
+        verb.toDestination();
+        //this.samplerB.chain(delay, verb, this.crossFade.b);
+        this.samplerB.connect(this.crossFade.b);
+    }
+
+    updateColorArray() {
+        const colorA = this.colors[this.idA];
+        const colorB = this.colors[this.idB];
+        this.colorScale = chroma.scale([colorA, colorB]).mode('lch').colors(this.crossFadeMeasures);
+        console.log("this.colorScale=", this.colorScale);
+        
+    }
+
+    getColor() {
+        // I think this error checking is needed due to how stuff is (sort of) threaded
+        if(this.measureOscillator >= this.colorScale.length) {
+            return this.colorScale[this.colorScale.length-1];
+        }
+        if(this.measureOscillator == 0) return this.colorScale[0];
+
+        return this.colorScale[this.measureOscillator-1];
     }
 
     init(scaleNotes) {
-        this.sampler = new Tone.Sampler(this.soundFiles);
-        this.sampler.volume.value = -15;
-        const verb = new Tone.Reverb('2');
-        const delay = new Tone.PingPongDelay("4n", 0.2);
-    
-        // Example of LFO for volume.
-        this.sampler.chain(delay, verb);
-        verb.toDestination();
+        
     }
 
      /**
@@ -26,15 +79,24 @@ class PadSource extends SoundSource {
      */
      evolvePad(time) {
         if(this.paused) return;
+        console.log("EvolvePad this.crossFade=", this.crossFade);
 
+        
         this.currentChord = this.conductor.getNewChord();
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
-
-        if(this.sampler.loaded) {
-            this.sampler.triggerAttackRelease(this.currentChord, duration, time);
-            this.transportId = Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);    
+        try {
+            console.log("this.currentChord =", this.currentChord )
+            if(this.samplerA.loaded) {
+                this.samplerA.triggerAttackRelease(this.currentChord, duration, time);
+            }
+            if(this.samplerB.loaded) {
+                this.samplerB.triggerAttackRelease(this.currentChord, duration, time);
+            }
         }
+        catch(e) {console.log("error on trigger adsr ", e)}
+
+        Tone.Transport.schedule(this.evolvePad.bind(this), '+' + duration);    
 
         // always check if we have a Conductor. It's possible to not have one during preview
         if(this.conductor) Tone.Draw.schedule(this.conductor.notePlayed(this), '+' + duration);

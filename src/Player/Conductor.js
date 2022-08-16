@@ -45,16 +45,12 @@ class Conductor extends SoundControl {
      *         Randomizes the rhythm every 8 measures.
      */
     evolveMusic() {
-        Tone.Transport.scheduleRepeat(function(time){
-            console.log('1 measure passed');
-        }, "1m");
+
 
         // every 8 measures we pick a new rhythm 
         const self = this;
         Tone.Transport.scheduleRepeat(function(time){
             console.log('8 measures passed, changing rhythems');
-            console.log("BEFORE this.curRythm1 ", self.curRhythm1)
-            console.log("BEFORE this.curRythm2 ", self.curRhythm2)
             self.curRhythm1 = self.bresenhamEuclidean(self.randomIntFromRange(1, 7), self.randomIntFromRange(7, 22));
             self.curRhythm2 = self.shiftRhythm(self.curRhythm1, 3);
             console.log("AFTER this.curRythm1 ", self.curRhythm1)
@@ -85,7 +81,7 @@ class Conductor extends SoundControl {
         }
         else if(newPerformer.getType() === 'pad') {
             this.padPerformer = newPerformer;
-            this.padPerformer.init(this.scaleNotes);
+            this.padPerformer.init();
         }
         else if(newPerformer.getType() === 'rhythm') {
             if(this.rhythmPerformer1 == null) {

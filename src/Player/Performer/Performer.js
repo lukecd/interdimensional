@@ -12,11 +12,12 @@ class Performer {
         this.engine = engine;
         this.type = type;
         this.soundSource = soundSource;
+        this.activeSource = 0;
         this.shouldAnimate = false;
         this.renderer = null;
 
         // maintain the two way relationship between Performer and SoundSource
-        this.soundSource.setPerformer(this);
+        soundSource.setPerformer(this);
 
         // create our position and add to matter.js
         this.position = Matter.Bodies.circle(x, y, radius, {
@@ -59,8 +60,12 @@ class Performer {
       return this.renderer;
     }
 
-    getSoundsource() {
-      return this.soundSource;
+    getActiveSoundsource() {
+      return this.soundSources[this.activeSource];
+    }
+
+    addSoundSource(soundSource) {
+        
     }
 }
 

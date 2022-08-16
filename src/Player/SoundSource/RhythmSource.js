@@ -3,8 +3,8 @@ import * as Tonal from "@tonaljs/tonal";
 import SoundSource from "./SoundSource";
 
 class RhythmSource extends SoundSource {
-    constructor(player, conductor, performerInstrument, soundFiles) {
-        super(player, conductor);
+    constructor(conductor, performerInstrument, soundFiles) {
+        super(conductor);
         this.performerInstrument = performerInstrument;
         this.soundFiles = soundFiles;
         super.setType('rhythm');
@@ -16,7 +16,7 @@ class RhythmSource extends SoundSource {
         this.offset = offset;
 
         const autoPanner = new Tone.AutoPanner("4n").toDestination().start();
-        const delay = new Tone.FeedbackDelay('8n.', 0.5).toDestination();
+        const delay = new Tone.Delay(0.2, 0.5).toDestination();
 
         this.sampler = new Tone.Sampler(this.soundFiles);
 

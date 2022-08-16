@@ -3,9 +3,9 @@ import Renderer from "./Renderer";
 class WaveRenderer extends Renderer {
 
     // colors should be rgba(36, 92, 129, 0.4) array
-    constructor(x, y, width, height, colors) {
+    constructor(x, y, width, height) {
         super(x, y, width, height);
-        this.waveGroup = new WaveGroup(colors);
+        this.waveGroup = new WaveGroup();
         // window.addEventListener('resize', this.resize.bind(this), false);
         this.resize();
     }
@@ -14,10 +14,10 @@ class WaveRenderer extends Renderer {
         this.waveGroup.resize(this.width, this.height);
     }
 
-    draw(ctx) {
+    draw(ctx, color) {
         ctx.clearRect(0, 0, this.width, this.height);
 
-        this.waveGroup.draw(ctx);
+        this.waveGroup.draw(ctx, color);
     }
 }
 
@@ -49,10 +49,9 @@ class Point {
  * A wave is a grouping of n points connected using quadraticCurveTo
  */
 class Wave {
-    constructor(index, totalPoints, color) {
+    constructor(index, totalPoints) {
         this.index = index;
         this.totalPoints = totalPoints;
-        this.color = color;
         this.points = [];
         this.resize();
     }
@@ -76,9 +75,9 @@ class Wave {
         }
     }
 
-    draw(context) {
+    draw(context, color) {
         context.beginPath();
-        context.fillStyle = this.color;
+        context.fillStyle = color;
         let prevX = this.points[0].x;
         let prevY = this.points[0].y;
         
@@ -111,16 +110,15 @@ class Wave {
  * Right now it's hard-coded to 3, but that could be changed easily.
  */
 class WaveGroup {
-    constructor(colors) {
+    constructor() {
         this.totalWaves = 1;
         this.totalPoints = 6;
         
-        this.colors = colors;
         this.waves = [];
 
         // create our waves and add to the wave group class
         for(let i=0; i<this.totalWaves; i++) {
-            const wave = new Wave (i, this.totalPoints, this.colors[i]);
+            const wave = new Wave (i, this.totalPoints);
             this.waves[i] = wave;
         }
     }
@@ -132,10 +130,10 @@ class WaveGroup {
         }
     }
 
-    draw(context) {
+    draw(context, color) {
         for(let i=0; i<this.totalWaves; i++) {
             const wave = this.waves[i];
-            wave.draw(context);
+            wave.draw(context, color);
         }     
     }
     

@@ -8,9 +8,8 @@ import SoundSource from "./SoundSource";
  */
 class AtmosphereSource extends SoundSource {
 
-    constructor(player, conductor, particleCount = -1) {
-        super(player, conductor);
-        conductor.registerAtmosphere(this);
+    constructor(conductor, particleCount = -1) {
+        super();
         super.setType('atmosphere');
         this.loaded = false;
 
@@ -38,7 +37,7 @@ class AtmosphereSource extends SoundSource {
             }
         });
         const verb = new Tone.Reverb('4');
-        const delay = new Tone.Delay('8n.', 0.5).toDestination();
+        const delay = new Tone.Delay(1).toDestination();
         this.player.chain(verb, delay, Tone.Destination);
         this.player.loop = false;
         this.player.autostart = true;
@@ -49,7 +48,6 @@ class AtmosphereSource extends SoundSource {
     }
 
     pause() {
-        console.log("Atmosphere SOurce Pause")
         if(this.player) this.player.stop("0.42");
     }
 
