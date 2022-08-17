@@ -81,7 +81,7 @@ const PrototypeViewer = (props) => {
   }, [canvasName]);
 
   const playPreview = () => {
-    const preview = new PreviewEngine(part, instrument, soundFiles);
+    const preview = new PreviewEngine(part, instrument, soundFiles, props.prototype.color);
     preview.play();
     setPreviewEngine(preview);
     setIsPreviewing(true);

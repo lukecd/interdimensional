@@ -1,45 +1,79 @@
 import * as Tone from "tone"
 import * as Tonal from "@tonaljs/tonal";
 import SoundSource from "./SoundSource";
+import chroma from "chroma-js";
 
 class RhythmSource extends SoundSource {
-    constructor(conductor, performerInstrument, soundFiles) {
-        super(conductor);
-        this.performerInstrument = performerInstrument;
-        this.soundFiles = soundFiles;
+    constructor(conductor, performerInstrument, soundFiles, color) {
+        super(conductor, soundFiles, color);
+        this.performerInstrument = performerInstrument; // TODO: delete?
+        this.soundFiles = soundFiles; // TODO: delete?
         super.setType('rhythm');
+        this.setCrossfadeA();
+        this.setCrossfadeB();
     }
 
-    init(scaleNotes, tempo = '4n', duration = '8n', offset = 0) {
+    init(tempo = '4n', duration = '8n', offset = 0) {
         this.tempo = tempo;
         this.duration = duration;
         this.offset = offset;
-
-        const autoPanner = new Tone.AutoPanner("4n").toDestination().start();
-        const delay = new Tone.Delay(0.2, 0.5).toDestination();
-
-        this.sampler = new Tone.Sampler(this.soundFiles);
-
-        // this.sampler.connect(delay);
-        // delay.connect(autoPanner);
-        this.sampler.volume.value = -5;
-
-        var filter = new Tone.Filter(1200, "highpass");
-        var vol = new Tone.Volume();
-
-        // Example of LFO for lowpass filter.
-        var lfo = new Tone.LFO(4, 200, 1200); // hertz, min, max
-        lfo.connect(filter.frequency);
-        lfo.start();
-
-        // Example of LFO for volume.
-        var lfo2 = new Tone.LFO(Math.random() * 0.01, -100, -9); // hertz, min, max
-        lfo2.connect(vol.volume);
-        lfo2.start();
-        this.sampler.chain(delay, autoPanner, filter, vol);
-        vol.toDestination();
     }
     
+    setCrossfadeA() {
+        // clear the old one
+        if(this.crossFade.a) this.crossFade.a.dispose();
+        this.idA = this.randomIntFromRange(0, this.soundFileSorces.length-1);
+
+        console.log("rhythm setting crossfade a=", this.soundFileSorces[this.idA]);
+        this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
+        console.log("this.samplerA=", this.samplerA);
+
+        this.samplerA.volume.value = -5;
+
+        const autoPanner = new Tone.AutoPanner("4n");
+        const delay = new Tone.Delay(0.2, 0.5);
+        this.samplerA.chain(autoPanner, delay);
+        delay.toDestination();
+        this.samplerA.connect(this.crossFade.a);
+
+        // colors and stuff
+        this.idA = 0;
+        this.idB = 0;
+        this.updateColorArray();
+    }
+
+    setCrossfadeB() {
+        // clear the old one
+        if(this.crossFade.b) this.crossFade.b.dispose();
+        this.idB = this.randomIntFromRange(0, this.soundFileSorces.length-1);
+        console.log("rhythm setting crossfade b=", this.soundFileSorces[this.idB]);
+        this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
+        this.samplerB.volume.value = -5;
+
+        const autoPanner = new Tone.AutoPanner("4n");
+        const delay = new Tone.Delay(0.2, 0.5);
+        this.samplerA.chain(autoPanner, delay);
+        delay.toDestination();
+        this.samplerB.connect(this.crossFade.b);
+    }
+
+    updateColorArray() {
+        const colorA = this.colors[this.idA];
+        const colorB = this.colors[this.idB];
+        this.colorScale = chroma.scale([colorA, colorB]).mode('lch').colors(this.crossFadeMeasures);
+        console.log("this.colorScale=", this.colorScale);
+    }
+
+    getColor() {
+        // I think this error checking is needed due to how stuff is (sort of) threaded
+        if(this.measureOscillator >= this.colorScale.length) {
+            return this.colorScale[this.colorScale.length-1];
+        }
+        if(this.measureOscillator == 0) return this.colorScale[0];
+
+        return this.colorScale[this.measureOscillator-1];
+    }
+
 
     playRhythm(sampler, motifArray, performerIndex) {
         this.loop = new Tone.Loop((time) => {
@@ -47,16 +81,22 @@ class RhythmSource extends SoundSource {
             
             let noteIndex = motifArray.shift();
             motifArray.push(noteIndex);
+// console.log("RS this.conductor, ", this.conductor);
+// console.log("RS this.samplerA.loaded=", this.samplerA.loaded);
+// console.log("RS this.samplerB.loaded=", this.samplerB.loaded);
 
             if(this.conductor.shouldPlay(this)) {
-                if(this.sampler.loaded) {
+                if(this.samplerA.loaded) {
                     // TODO: I'm not sure about this logic. 
                     let note = this.conductor.getMidNote(noteIndex, chordNotes);
-                    //console.log('sampler vol: ',sampler.volume.value);
-                    this.sampler.triggerAttackRelease(note, this.duration, time);
-                    //this.conductor.notePlayed(this);
-                    Tone.Draw.schedule(this.conductor.notePlayed(this), time);
+                    this.samplerA.triggerAttackRelease(note, this.duration, time);
                 }
+                if(this.samplerB.loaded) {
+                    // TODO: I'm not sure about this logic. 
+                    let note = this.conductor.getMidNote(noteIndex, chordNotes);
+                    this.samplerB.triggerAttackRelease(note, this.duration, time);
+                }
+                Tone.Draw.schedule(this.conductor.notePlayed(this), time);
             }
         }, this.tempo).start();
         this.loop.humanize = true;

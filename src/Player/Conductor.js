@@ -86,11 +86,11 @@ class Conductor extends SoundControl {
         else if(newPerformer.getType() === 'rhythm') {
             if(this.rhythmPerformer1 == null) {
                 this.rhythmPerformer1 = newPerformer;
-                this.rhythmPerformer1.init(this.scaleNotes);
+                this.rhythmPerformer1.init();
             }
             else if(this.rhythmPerformer2 == null) {
                 this.rhythmPerformer2 = newPerformer;
-                this.rhythmPerformer2.init(this.scaleNotes, '2n', '16n', 7);
+                this.rhythmPerformer2.init('2n', '16n', 7);
             }
         }
         this.performers.push(newPerformer);
@@ -152,11 +152,11 @@ class Conductor extends SoundControl {
     notePlayed(soundSource) {
         if(soundSource.getType() === 'pad') {
             this.particles.unshift(new Particle(soundSource.getPerformer().x, soundSource.getPerformer().y, 
-                                            this.particleRadius, soundSource.performer.color, this.engine));
+                                            this.particleRadius, soundSource.getColor(), this.engine));
         }
         else if(soundSource.getType() === 'rhythm') {
             this.particles.unshift(new Particle(soundSource.getPerformer().x, soundSource.getPerformer().y, 
-                                            this.particleRadius, soundSource.performer.color, this.engine));   
+                                            this.particleRadius, soundSource.getColor(), this.engine));   
             // rhythm performers use a water color renderer that updates on new notes
             soundSource.getPerformer().getRenderer().addParticle();
         }

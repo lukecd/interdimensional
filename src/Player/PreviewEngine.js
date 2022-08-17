@@ -14,7 +14,7 @@ import SoundControl from "./SoundControl";
  */
 class PreviewEngine extends SoundControl {
 
-    constructor(performerType, performerInstrument, soundFiles) {
+    constructor(performerType, performerInstrument, soundFiles, color) {
         super();
         this.soundSource = null;
         this.previewRhythm = this.bresenhamEuclidean(6, 8);
@@ -24,11 +24,11 @@ class PreviewEngine extends SoundControl {
             this.soundSource.init(this.getMidNote(-14,  this.scaleNotes));
         }
         else if(performerType === 'pad') {
-            this.soundSource = new PadSource(null, this, performerInstrument, soundFiles); 
+            this.soundSource = new PadSource(this, performerInstrument, soundFiles, color); 
             this.soundSource.init(this.scaleNotes);
         }
         else if(performerType === 'rhythm') {
-            this.soundSource = new RhythmSource(null, this, performerInstrument, soundFiles);
+            this.soundSource = new RhythmSource(this, performerInstrument, soundFiles, color);
             this.soundSource.init(this.scaleNotes);
         }
     }

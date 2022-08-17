@@ -14,9 +14,13 @@ class AtmosphereSource extends SoundSource {
         this.loaded = false;
 
         this.grainURLs = [
-            "EX_ATSM_160_Singing_Bowl_Loop_Drifting_Dbm.mp3",
             "EX_ATSM_Koshi_Chimes_Aria_Tuning_Texture_Whisperings_Dm.mp3",
-            "OS_LFC_SFX_Birds.mp3"
+            "OS_LFC_SFX_Birds.mp3",
+            "chime.mp3",
+            "EX_ATSM_140_Koshi_Chimes_Aria_Tuning_Loop_Wondering_Am.mp3",
+            "RARE_koshi1_chimes_melodic_texture_Gb_75_loop.mp3",
+            "RARE_koshi2_chimes_melodic_texture_C_149_loop5.mp3",
+            "SPLC-3480_FX_Oneshot_Wind_Chimes_Tonal.mp3"
         ];
         this.baseUrl = "/audio/textures/";
 
@@ -31,7 +35,7 @@ class AtmosphereSource extends SoundSource {
             url: this.baseUrl+this.grainURLs[curGrain],
             fadeIn: 0.5,
             fadeOut: 1,
-            volume: -20,
+            volume: -30,
             onload: () => {
                 this.loaded = true;
             }

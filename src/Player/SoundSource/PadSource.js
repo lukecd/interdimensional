@@ -6,8 +6,8 @@ import chroma from "chroma-js";
 class PadSource extends SoundSource {
     constructor(conductor, performerInstrument, soundFiles, color) {
         super(conductor, soundFiles, color);
-        this.performerInstrument = performerInstrument;
-        this.soundFiles = soundFiles;
+        this.performerInstrument = performerInstrument; // TODO: delete?
+        this.soundFiles = soundFiles; // TODO: delete?
         this.setType('pad');
 
         this.setCrossfadeA();
@@ -19,8 +19,9 @@ class PadSource extends SoundSource {
         if(this.crossFade.a) this.crossFade.a.dispose();
         this.idA = this.randomIntFromRange(0, this.soundFileSorces.length-1);
 
-        console.log("setting crossfade a=", this.soundFileSorces[this.idA]);
+        console.log("pad setting crossfade a=", this.soundFileSorces[this.idA]);
         this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
+        console.log("pad this.samplerA=", this.samplerA);
         this.samplerA.volume.value = -15;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.Delay(1);
@@ -30,17 +31,16 @@ class PadSource extends SoundSource {
         this.samplerA.connect(this.crossFade.a);
 
         // colors and stuff
-        this.idA = 0;
+        this.idA = 0; // TODO, why do I zero these out?
         this.idB = 0;
         this.updateColorArray();
-
     }
 
     setCrossfadeB() {
         // clear the old one
         if(this.crossFade.b) this.crossFade.b.dispose();
         this.idB = this.randomIntFromRange(0, this.soundFileSorces.length-1);
-        console.log("setting crossfade b=", this.soundFileSorces[this.idB]);
+        console.log("pad setting crossfade b=", this.soundFileSorces[this.idB]);
         this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
 
         this.samplerB.volume.value = -15;
@@ -57,7 +57,6 @@ class PadSource extends SoundSource {
         const colorB = this.colors[this.idB];
         this.colorScale = chroma.scale([colorA, colorB]).mode('lch').colors(this.crossFadeMeasures);
         console.log("this.colorScale=", this.colorScale);
-        
     }
 
     getColor() {
@@ -109,7 +108,6 @@ class PadSource extends SoundSource {
         this.paused = false;
         console.log("PadSource play");
         Tone.Transport.schedule(this.evolvePad.bind(this), "1");
-    
     }
 
     pause() {
@@ -119,11 +117,13 @@ class PadSource extends SoundSource {
     }
 
     getVolume() {
-        return this.sampler.volume.value;
+        if(this.samplerA) return this.samplerA.volume.value;
+        return 0;
     }
 
     setVolume(vol) {
-        this.sampler.volume.value = vol;
+        if(this.samplerA) this.samplerA.volume.value = vol;
+        if(this.samplerB) this.samplerB.volume.value = vol;
     }
 
 }

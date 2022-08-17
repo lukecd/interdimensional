@@ -8,8 +8,8 @@ class RhythmPerformer extends Performer {
         this.renderer = new WatercolorRenderer(x-radius, y-radius, radius*2, radius*2, this.color);
     }
 
-    init(scaleNotes, rhythm, tempo = '8n', duration = '8n', offset = 0) {
-        this.soundSource.init(scaleNotes, rhythm, tempo, duration, offset);
+    init(tempo = '8n', duration = '8n', offset = 0) {
+        this.soundSource.init(tempo, duration, offset);
     }
 
     draw(ctx) {        

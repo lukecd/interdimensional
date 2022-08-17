@@ -15,7 +15,7 @@ const App = () => {
     const [demoMode, setDemoMode] = useState(true);
 
     return (
-        <div name='top' className='w-full h-view  min-h-screen top-0 bg-background'>
+        <div name='top' className='w-full h-full  min-h-screen top-0 bg-background'>
             <Canvas className='fixed'
                     height={window.innerHeight} 
                     width={window.innerWidth}

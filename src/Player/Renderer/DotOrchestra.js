@@ -257,7 +257,7 @@ class DotOrchestra extends Renderer {
                 }
 
                 if(!this.rhythmSource1) {
-                    this.rhythmSource1 = new RhythmSource(this.conductor, instrument, soundOBJ);
+                    this.rhythmSource1 = new RhythmSource(this.conductor, instrument, soundOBJ, color);
                     let rhythmPerformer = new RhythmPerformer(x, 
                                                                y,
                                                                this.performerRadius,
@@ -269,14 +269,14 @@ class DotOrchestra extends Renderer {
                     this.conductor.registerActor(rhythmPerformer);     
                 }
                 else if(!this.rhythmSource2) {
-                    this.rhythmSource2 = new RhythmSource(this.conductor, instrument, soundOBJ);
+                    this.rhythmSource2 = new RhythmSource(this.conductor, instrument, soundOBJ, color);
                     let rhythmPerformer = new RhythmPerformer(x, 
                                                                y,
                                                                this.performerRadius,
                                                                color,
                                                                this.ctx,
                                                                this.engine,
-                                                               this.rhythmSource1);   
+                                                               this.rhythmSource2);   
                     this.performers.push(rhythmPerformer);
                     this.conductor.registerActor(rhythmPerformer);     
                 }
