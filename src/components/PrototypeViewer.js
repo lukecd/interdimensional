@@ -118,7 +118,7 @@ const PrototypeViewer = (props) => {
       <div className="flex flex-col justify-between"> 
       <span className="bg-secondary font-info text-xl mt-2 mr-2 ml-2"> {props.prototype.name} </span>
       <span className="bg-secondary font-info text-sm mt-2 ml-2 mr-2">Price {formattedPrice} MATIC
-      <span className="bg-secondary font-info text-sm mt-2 mr-2"> * Edition {props.prototype.currentlyMinted.toString()}:{props.prototype.editionSize.toString()} </span>
+      <span className="bg-secondary font-info text-sm mt-2 mr-2"> * Minted {props.prototype.currentlyMinted.toString()}:{props.prototype.editionSize.toString()} </span>
       </span>
       </div> 
       

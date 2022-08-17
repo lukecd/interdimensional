@@ -25,11 +25,11 @@ class PreviewEngine extends SoundControl {
         }
         else if(performerType === 'pad') {
             this.soundSource = new PadSource(this, performerInstrument, soundFiles, color); 
-            this.soundSource.init(this.scaleNotes);
+            this.soundSource.init();
         }
         else if(performerType === 'rhythm') {
             this.soundSource = new RhythmSource(this, performerInstrument, soundFiles, color);
-            this.soundSource.init(this.scaleNotes);
+            this.soundSource.init();
         }
     }
 

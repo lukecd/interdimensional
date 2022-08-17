@@ -10,6 +10,8 @@ class PadSource extends SoundSource {
         this.soundFiles = soundFiles; // TODO: delete?
         this.setType('pad');
 
+        this.idA = 0;
+        this.idB = 0;
         this.setCrossfadeA();
         this.setCrossfadeB();
     }
@@ -22,7 +24,7 @@ class PadSource extends SoundSource {
         console.log("pad setting crossfade a=", this.soundFileSorces[this.idA]);
         this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
         console.log("pad this.samplerA=", this.samplerA);
-        this.samplerA.volume.value = -15;
+        this.samplerA.volume.value = -20;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.Delay(1);
         this.samplerA.chain(delay, verb);
@@ -31,8 +33,6 @@ class PadSource extends SoundSource {
         this.samplerA.connect(this.crossFade.a);
 
         // colors and stuff
-        this.idA = 0; // TODO, why do I zero these out?
-        this.idB = 0;
         this.updateColorArray();
     }
 
@@ -43,7 +43,7 @@ class PadSource extends SoundSource {
         console.log("pad setting crossfade b=", this.soundFileSorces[this.idB]);
         this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
 
-        this.samplerB.volume.value = -15;
+        this.samplerB.volume.value = -20;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.Delay(1);
         this.samplerB.chain(delay, verb);

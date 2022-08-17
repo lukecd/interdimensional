@@ -56,7 +56,7 @@ class DotOrchestra extends Renderer {
         let y = Math.random() * (window.innerHeight-(2*this.performerRadius)) + (2*this.performerRadius);
 
         // drone first
-        let droneSoundSource = new DroneSource(this.conductor);
+        let droneSoundSource = new DroneSource(this.conductor, this.colors[0]);
         let dronePerformer = new DronePerformer(x, 
                                                 y,
                                                 this.performerRadius,
@@ -87,7 +87,7 @@ class DotOrchestra extends Renderer {
                 release: 4
             }
         };
-        let padSoundSource = new PadSource(this.conductor, 'pad-canyon', padSoundFiles);
+        let padSoundSource = new PadSource(this.conductor, 'pad-canyon', padSoundFiles, this.colors[1]);
         let padPerformer = new PadPerformer(x, 
                                             y,
                                             this.performerRadius,
@@ -116,7 +116,7 @@ class DotOrchestra extends Renderer {
                 release: 2
             }
         };
-        let rhythmSource1 = new RhythmSource(this.conductor, 'mallet-marimba', rhythmSoundFiles1);
+        let rhythmSource1 = new RhythmSource(this.conductor, 'mallet-marimba', rhythmSoundFiles1, this.colors[2]);
         let rhythmPerformer1 = new RhythmPerformer(x, 
                                                    y,
                                                    this.performerRadius,
@@ -142,7 +142,7 @@ class DotOrchestra extends Renderer {
                 attack: .25,
                 release: 2
         }};
-        let rhythmSource2 = new RhythmSource(this.conductor, 'mallet-mellow', rhythmSoundFiles2);
+        let rhythmSource2 = new RhythmSource(this.conductor, 'mallet-mellow', rhythmSoundFiles2, this.colors[3]);
         let rhythmPerformer2 = new RhythmPerformer(x, 
                                                    y,
                                                    this.performerRadius,

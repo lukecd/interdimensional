@@ -9,6 +9,9 @@ class RhythmSource extends SoundSource {
         this.performerInstrument = performerInstrument; // TODO: delete?
         this.soundFiles = soundFiles; // TODO: delete?
         super.setType('rhythm');
+
+        this.idA = 0;
+        this.idB = 0;
         this.setCrossfadeA();
         this.setCrossfadeB();
     }
@@ -28,7 +31,7 @@ class RhythmSource extends SoundSource {
         this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
         console.log("this.samplerA=", this.samplerA);
 
-        this.samplerA.volume.value = -5;
+        this.samplerA.volume.value = -10;
 
         const autoPanner = new Tone.AutoPanner("4n");
         const delay = new Tone.Delay(0.2, 0.5);
@@ -37,8 +40,6 @@ class RhythmSource extends SoundSource {
         this.samplerA.connect(this.crossFade.a);
 
         // colors and stuff
-        this.idA = 0;
-        this.idB = 0;
         this.updateColorArray();
     }
 
@@ -48,7 +49,7 @@ class RhythmSource extends SoundSource {
         this.idB = this.randomIntFromRange(0, this.soundFileSorces.length-1);
         console.log("rhythm setting crossfade b=", this.soundFileSorces[this.idB]);
         this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
-        this.samplerB.volume.value = -5;
+        this.samplerB.volume.value = -10;
 
         const autoPanner = new Tone.AutoPanner("4n");
         const delay = new Tone.Delay(0.2, 0.5);
@@ -61,7 +62,6 @@ class RhythmSource extends SoundSource {
         const colorA = this.colors[this.idA];
         const colorB = this.colors[this.idB];
         this.colorScale = chroma.scale([colorA, colorB]).mode('lch').colors(this.crossFadeMeasures);
-        console.log("this.colorScale=", this.colorScale);
     }
 
     getColor() {
@@ -77,24 +77,20 @@ class RhythmSource extends SoundSource {
 
     playRhythm(sampler, motifArray, performerIndex) {
         this.loop = new Tone.Loop((time) => {
-            let chordNotes = this.conductor.getCurrentChord();
-            
+            let chordNotes = this.conductor.getCurrentChord();        
             let noteIndex = motifArray.shift();
             motifArray.push(noteIndex);
-// console.log("RS this.conductor, ", this.conductor);
-// console.log("RS this.samplerA.loaded=", this.samplerA.loaded);
-// console.log("RS this.samplerB.loaded=", this.samplerB.loaded);
 
             if(this.conductor.shouldPlay(this)) {
                 if(this.samplerA.loaded) {
                     // TODO: I'm not sure about this logic. 
                     let note = this.conductor.getMidNote(noteIndex, chordNotes);
-                    this.samplerA.triggerAttackRelease(note, this.duration, time);
+                    this.samplerA.triggerAttackRelease(note, 2, time);
                 }
                 if(this.samplerB.loaded) {
                     // TODO: I'm not sure about this logic. 
                     let note = this.conductor.getMidNote(noteIndex, chordNotes);
-                    this.samplerB.triggerAttackRelease(note, this.duration, time);
+                    this.samplerB.triggerAttackRelease(note, 2, time);
                 }
                 Tone.Draw.schedule(this.conductor.notePlayed(this), time);
             }
@@ -113,11 +109,12 @@ class RhythmSource extends SoundSource {
     }
 
     getVolume() {
-        return this.sampler.volume.value;
+        return this.samplerA.volume.value;
     }
 
     setVolume(vol) {
-        this.sampler.volume.value = vol;
+        this.samplerA.volume.value = vol;
+        this.samplerB.volume.value = vol;
     }
 
 }

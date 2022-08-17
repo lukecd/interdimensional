@@ -47,7 +47,7 @@ const { chains, provider } = configureChains(
 // but that's another rabbit hole for another day. going hacky style so I can 
 // focus on the music now.
 window.$music_playing = false;
-window.$CONTRACT_ADDRESS = "0x9548EE6e1B7B4a5de565959Ee460833bdd845f71";
+window.$CONTRACT_ADDRESS = "0x2C0fDa00F19D0c238AAB2f90107b05B5d6653eA1";
 window.$CONDUCTOR = null;
 window.$PERFORMING_NFTs = [];
 window.$PROTOTYPES = [];
