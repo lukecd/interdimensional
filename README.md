@@ -4,6 +4,9 @@ This is the front-end for Interdimensional One, a portal to a quiet mind.
 The smart contracts can be found here
 https://github.com/lukecd/interdimensional-contracts
 
+You can interact with the dApp on the Mumbai Testnet here
+https://interdimensional.one/
+
 ## Inspiration
 Interdimensional.One is a generative art and music experience that feeds off NFTs. It's portal from your monkey mind to a place of stillness. It's the first ever NFT marketplace for sound designers.
 
