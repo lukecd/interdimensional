@@ -74,11 +74,7 @@ const Navbar = (props) => {
                             About
                         </Link>
                     </li>
-                    <li>
-                        <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/mint">
-                            Mint
-                        </Link>
-                    </li>
+  
                 </>
                 )}  
                 {!loggedIn && (
@@ -122,11 +118,7 @@ const Navbar = (props) => {
                             About
                         </Link>
                     </li>
-                    <li className='py-6 text-4xl mr-5'>
-                        <Link onClick={handleClick} to="me" to='/mint'>
-                            Mint
-                        </Link>
-                    </li>
+
                     <li>
                     <ConnectButton showBalance={false}/>
                     </li>

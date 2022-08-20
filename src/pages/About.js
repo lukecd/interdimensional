@@ -2,8 +2,36 @@ import React from 'react'
 
 const About = () => {
   return (
-    <div className='absolute w-full h-full z-3 bg-background'>
-      <img src="data:application/json;base64,eyJuYW1lIjogIkRlZXAgQ2FueW9uIERyZWFtcyAjMSIsImRlc2NyaXB0aW9uIjogIlF1aWV0IFlvdXIgTW9ua2V5IE1pbmQiLCJlZGl0aW9uIjogIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIjoiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACoiLCJwYXJ0IjogInBhZCIsImluc3RydW1lbnQiOiAicGFkLWNhbnlvbiIsImltYWdlIjogIjxzdmcgaGVpZ2h0PSI0MDAiIHdpZHRoPSI0MDAiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiMwMjJjY2MiPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iNTAiIGZpbGw9IiM1NzM1OWYiIC8+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSI4MCIgc3Ryb2tlPSIjNTczNTlmIiBzdHJva2Utd2lkdGg9IjEiIGZpbGwtb3BhY2l0eT0iMCIgLz48Y2lyY2xlIGN4PSIyMjcuNDcyNzY5OTAzNjA4NjUiIGN5PSIyNzUuMTM0ODU4MTgwNjMiIHI9IjIzIiBmaWxsPSIjMzcyZWJlIiAvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTQwIiBzdHJva2U9IiM1NzM1OWYiIHN0cm9rZS13aWR0aD0iMyIgZmlsbC1vcGFjaXR5PSIwIiAvPjxjaXJjbGUgY3g9Ijc4LjMzMTU1NjY3NzUyNDA4IiBjeT0iMjY5LjI1ODg2MTUyMzE2ODgiIHI9IjM4IiBmaWxsPSIjNDQyZmI1IiAvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTcwIiBzdHJva2U9IiM1NzM1OWYiIHN0cm9rZS13aWR0aD0iNCIgZmlsbC1vcGFjaXR5PSIwIiAvPjxjaXJjbGUgY3g9IjI2NC43NjkxODc5MzYxNjM0IiBjeT0iMzU3LjE3ODA5MTAxMTcyNDQ2IiByPSIyOCIgZmlsbD0iIzQ5MzBiMCIgLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjIwMCIgc3Ryb2tlPSIjNTczNTlmIiBzdHJva2Utd2lkdGg9IjUiIGZpbGwtb3BhY2l0eT0iMCIgLz48Y2lyY2xlIGN4PSIyMjYuNzE0NDU1NDQzMTExMiIgY3k9IjM5OC4yMDc4MTQ4NTY5Nzc5IiByPSIzNCIgZmlsbD0iIzRlMzFhYyIgLz48L3N2Zz4ifQ=="/> </div>
+    <div className='mt-[90px] w-screen h-screen bg-background'>
+    <div className='flex flex-col align-center w-[70%] pl-8 pr-8 pb-8 ml-8 mr-8 bg-primary border-8 border-secondary'>
+
+      <div className='text-xl mt-5 font-heading bg-primary'>
+        Interdimensional.One is a generative art and music experience that feeds off NFTs. It's portal from your monkey mind to a place of stillness. It's the first ever NFT marketplace for sound designers.
+        It's a place you go to relax, you can watch the visuals or interact with them. You can close you eyes and meditate to the music or you can let it carry you into a flow state while writing code. It's simple enough to not be distracting and dynamic enough to not be boring.   
+      </div>
+
+      <div className='text-xl mt-5 font-heading bg-primary'>
+        NFTs are represented initially by a color and a unique instance of sound design. The color info and location of sound design files is stored on-chain. When minting an NFT, the color fades away to reveal a generative design (unique to that mint) and becomes the minter's property. The minter owns the design and (as NFTs are minted in editions), shares ownership of the sound design. 
+
+        The NFTs are used to unlock the generative music player. 
+
+        Each NFT drop is made up of a unique visualizer, a collection of 30-50 colors that work well together and 30-50 sounds that sound good together. The current visualizer using bouncing balls is just the first one, future drops will have different visualizers. To gain access to new visualizers, users will have to collect NFTs from future drops.     
+      </div>
+
+      <div className='mt-5 font-heading bg-primary'>
+        All sourcecode is opensource
+        <ul>
+          <li>Front-end: <a href="https://github.com/lukecd/interdimensional" target="_blank">https://github.com/lukecd/interdimensional</a></li>
+          <li>Smart contracts: <a href="https://github.com/lukecd/interdimensional-contracts" target="_blank"> https://github.com/lukecd/interdimensional-contracts</a></li>
+        </ul>
+        
+        
+      </div>
+
+    </div>
+
+
+    </div>
   )
 }
 
