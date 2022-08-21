@@ -128,7 +128,6 @@ class SplashScreenRenderer extends Renderer {
     }
 
     draw(ctx) {
-        console.log("drawing splash screen", ctx)
         ctx.clearRect(0, 0, this.width, this.height);
 
         const blackHoleSize  = 1000 ;//Math.abs(this.randnBm()) * 20;
@@ -160,7 +159,7 @@ class SplashScreenRenderer extends Renderer {
         const allBodies = Matter.Composite.allBodies(this.composite);
         for(let i=0; i<allBodies.length; i++) {
             if(allBodies[i].label === 'blackhole') {
-                console.log("draw particple")
+
                 ctx.beginPath();
                 ctx.arc(allBodies[i].position.x, allBodies[i].position.y, allBodies[i].radius, 0, 2 * Math.PI);
                 ctx.fillStyle = allBodies[i].color;
