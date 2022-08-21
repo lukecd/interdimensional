@@ -149,7 +149,6 @@ class SplashScreenRenderer extends Renderer {
                     color: this.colors[colorIndex],
                     radius: dotSize
                 });
-                console.log("added particle")
                 Matter.Composite.add(this.composite, particle);
                 this.numDots++;
             }

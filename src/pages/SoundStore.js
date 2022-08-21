@@ -25,12 +25,11 @@ const SoundStore = (props) => {
     args: 1
   });
 
-  // TODO change call from getAllNFTs to be user specific
-
   useEffect(() => {
 
     if (allPrototypes) {
       setPrototypes(allPrototypes);
+      console.log("allPrototypes=", allPrototypes)
       // window.$PERFORMING_NFTs = allNFTs;
 
       // break my NFTs into different categories
