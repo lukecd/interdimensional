@@ -50,22 +50,17 @@ class Conductor extends SoundControl {
         // every 8 measures we pick a new rhythm 
         const self = this;
         Tone.Transport.scheduleRepeat(function(time){
-            console.log('8 measures passed, changing rhythems');
             self.curRhythm1 = self.bresenhamEuclidean(self.randomIntFromRange(1, 7), self.randomIntFromRange(7, 22));
             self.curRhythm2 = self.shiftRhythm(self.curRhythm1, 3);
-            console.log("AFTER this.curRythm1 ", self.curRhythm1)
-            console.log("AFTER this.curRythm2 ", self.curRhythm2)
         }, "8m");
 
         // every 16 measures, pick a new atmosphere
         Tone.Transport.scheduleRepeat(function(time){
-            console.log("time for a new atmosphere")
             if(self.atmosphereSource) {
                 self.atmosphereSource = null;
             }
             self.atmosphereSource = new AtmosphereSource(null, self, self.particles.length);
             self.atmosphereSource.play();
-            console.log('16 measures passed, launching random athosphere this.atmosphereSource=', self.atmosphereSource );
         }, "16m");     
     }
 
@@ -98,7 +93,6 @@ class Conductor extends SoundControl {
 
     registerAtmosphere(source) {
         this.atmosphereSource = source;
-        console.log("Condustor this.atmosphereSource", this.atmosphereSource)
     }
 
     getChordsForNote(scaleNotes) {

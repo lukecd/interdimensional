@@ -54,10 +54,8 @@ class PreviewEngine extends SoundControl {
      * @param {*} rhythmSource The RhythmSource object asking if it should play
      */
     shouldPlay(rhythmSource) {
-        console.log("this.previewRhythm ", this.previewRhythm)
         let rhythm = this.previewRhythm.shift();
         this.previewRhythm.push(rhythm);
-        console.log("this.previewRhythm rhythm === 1", rhythm === 1)
 
         return rhythm === 1;
     }    

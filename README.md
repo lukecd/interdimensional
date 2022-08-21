@@ -48,6 +48,7 @@ Main areas of focus are
 3. Scalability (I have no idea how this will scale and need help there for sure)
 4. Where to store sound design files (currently they're stored on the main web server with onchain JSON data pointing to their location. I'd like to experiment with using Filecoin and IPFS.
 5. Sound design mode (adding support for MIDI out over USB so I can connect my hardware synths when designing sounds)
+6. Mobile mode (Need to get things working on tablet, for some reason once I add mouse integration on desktop, it breaks on mobile)
 
 Third Party Stuff
 <ul>

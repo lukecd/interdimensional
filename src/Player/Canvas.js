@@ -38,7 +38,7 @@ const Canvas = (props) => {
       const mConstraint = Matter.MouseConstraint.create(engine, options);
       Matter.Composite.add(engine.world, mConstraint);
 
-      draw(ctx, canvas, engine, props.play, props.setPlay);
+      draw(ctx, canvas, engine, props.play, props.setPlay, props.setDemoMode);
 
   }, []);
   

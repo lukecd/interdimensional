@@ -20,11 +20,8 @@ class PadSource extends SoundSource {
         // clear the old one
         if(this.crossFade.a) this.crossFade.a.dispose();
         this.idA = this.randomIntFromRange(0, this.soundFileSorces.length-1);
-
-        console.log("pad setting crossfade a=", this.soundFileSorces[this.idA]);
         this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
-        console.log("pad this.samplerA=", this.samplerA);
-        this.samplerA.volume.value = -20;
+        this.samplerA.volume.value = -25;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.Delay(1);
         this.samplerA.chain(delay, verb);
@@ -40,10 +37,8 @@ class PadSource extends SoundSource {
         // clear the old one
         if(this.crossFade.b) this.crossFade.b.dispose();
         this.idB = this.randomIntFromRange(0, this.soundFileSorces.length-1);
-        console.log("pad setting crossfade b=", this.soundFileSorces[this.idB]);
         this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
-
-        this.samplerB.volume.value = -20;
+        this.samplerB.volume.value = -25;
         const verb = new Tone.Reverb('2');
         const delay = new Tone.Delay(1);
         this.samplerB.chain(delay, verb);
@@ -56,7 +51,6 @@ class PadSource extends SoundSource {
         const colorA = this.colors[this.idA];
         const colorB = this.colors[this.idB];
         this.colorScale = chroma.scale([colorA, colorB]).mode('lch').colors(this.crossFadeMeasures);
-        console.log("this.colorScale=", this.colorScale);
     }
 
     getColor() {
@@ -78,19 +72,17 @@ class PadSource extends SoundSource {
      */
      evolvePad(time) {
         if(this.paused) return;
-        console.log("EvolvePad this.crossFade=", this.crossFade);
 
-        
         this.currentChord = this.conductor.getNewChord();
         let duration = Math.floor(Math.random() * 4) + 1;
         duration += 'm';
+        const velocity = Math.random();
         try {
-            console.log("this.currentChord =", this.currentChord )
             if(this.samplerA.loaded) {
-                this.samplerA.triggerAttackRelease(this.currentChord, duration, time);
+                this.samplerA.triggerAttackRelease(this.currentChord, duration, time, velocity);
             }
             if(this.samplerB.loaded) {
-                this.samplerB.triggerAttackRelease(this.currentChord, duration, time);
+                this.samplerB.triggerAttackRelease(this.currentChord, duration, time, velocity);
             }
         }
         catch(e) {console.log("error on trigger adsr ", e)}
@@ -106,7 +98,6 @@ class PadSource extends SoundSource {
      */
     play() {
         this.paused = false;
-        console.log("PadSource play");
         Tone.Transport.schedule(this.evolvePad.bind(this), "1");
     }
 

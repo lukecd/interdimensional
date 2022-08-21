@@ -63,10 +63,9 @@ const PrototypeViewer = (props) => {
     setInstrument(props.prototype.instrument);
 
     let sounds = props.prototype.soundFiles.toString();
-    console.log("sounds ", sounds)
+
     //sounds = ethers.utils.toUtf8String(sounds);
     let soundOBJ = JSON.parse(sounds.trim());
-    console.log("soundOBJ ", soundOBJ)
     setSoundFiles(soundOBJ);
   }, []);
 
@@ -103,9 +102,7 @@ const PrototypeViewer = (props) => {
       .then( returnValue => {console.log("mint success ", returnValue)})
       .catch(error => console.log("error on mint...", error.reason))
 
-      console.log("calling Mint")
       //await mint({args: [prototypeId, renderer.toSVG()]});
-      console.log("mintError ", mintError)
     }
   }
 

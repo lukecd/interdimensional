@@ -16,8 +16,8 @@ import DotOrchestra from './Renderer/DotOrchestra.js';
  * @param {*} canvas A reference to the site's canvas
  */
 
- const draw = (ctx, canvas, engine, play, setPlay) => {
-    new Player(ctx, canvas, engine, play, setPlay);
+ const draw = (ctx, canvas, engine, play, setPlay, setDemoMode) => {
+    new Player(ctx, canvas, engine, play, setPlay, setDemoMode);
 }
 export default draw;
 
@@ -30,12 +30,13 @@ export default draw;
  * sub-classes and swap between them here.
  */
 class Player {
-    constructor(ctx, canvas, engine, play, setPlay) {
+    constructor(ctx, canvas, engine, play, setPlay, setDemoMode) {
         this.ctx = ctx;
         this.canvas = canvas;
         this.engine = engine;
         this.play = play;
         this.setPlay = setPlay;
+        this.setDemoMode = setDemoMode;
 
         this.bgColor = '#12082D';
         this.colors = ['#8F0380', '#EC205B', '#FC7208', '#D00204', '#7701AD'];
@@ -67,6 +68,7 @@ class Player {
         this.engine.restitution = 1;
 
         this.setPlay(true);
+        this.setDemoMode(shouldDemo);
         this.renderer = new DotOrchestra(0, 0, this.width, this.height, this.ctx, this.bgColor, 
                                          this.colors, this.engine, shouldDemo, this.play, this.setPlay);
     }

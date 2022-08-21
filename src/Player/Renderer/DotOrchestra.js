@@ -16,6 +16,7 @@ import WaveRenderer from '../Renderer/WaveRenderer.js';
 import Renderer from '../Renderer/Renderer.js';
 
 import { ethers } from "ethers";
+
 import contractABI from '../../abi/InterdimensionalOne.json';
 import * as Tone from "tone"
 
@@ -95,7 +96,6 @@ class DotOrchestra extends Renderer {
                                             this.ctx,
                                             this.engine,
                                             padSoundSource);
-        console.log('padPerformer ', padPerformer);                                       
         this.performers.push(padPerformer);
         this.conductor.registerActor(padPerformer);     
         
@@ -167,21 +167,17 @@ class DotOrchestra extends Renderer {
         let account = accounts[0];
         provider.on('accountsChanged', function (accounts) {
             account = accounts[0];
-            console.log('new address:', address); // Print new address
         });
     
         const signer = provider.getSigner();
         const address = await signer.getAddress();
-        console.log('DotOrchestra logged in address=', address);
 
         const nftContract = new ethers.Contract(window.$CONTRACT_ADDRESS, contractABI, signer);
-        console.log("nftContract ", nftContract)
         let myNFTs = [];
         while(myNFTs.length == 0) {
             try{ myNFTs = await nftContract.getMyNFTS(); }
             catch(error) {console.log("error when querying for getMyNFTS ", error)}
         }
-        console.log("curNFTs ", myNFTs);
 
         let myPrototypes = [];
         while(myPrototypes.length == 0) {

@@ -1,6 +1,8 @@
 import Renderer from "./Renderer";
 import Matter from 'matter-js';
 import * as Tone from "tone"
+
+
 /**
  * Renders the opening splash screen.
  * Gives user option to launch in Demo mode or NFT mode.
@@ -86,6 +88,7 @@ class SplashScreenRenderer extends Renderer {
                     (self.mouseX < self.centerButtonRadius) &&
                     (self.mouseY < 60) &&
                     (self.mouseY > 31)) {
+       
                 self.launchNFTMode();
             }
         }, false)
@@ -192,7 +195,6 @@ class SplashScreenRenderer extends Renderer {
         ctx.restore();
         
         if(this.getFadeOut()) {
-            console.log("splash screen renderer getFadeOut")
             ctx.globalAlpha = this.globalAlpha;
             this.globalAlpha -= 0.009;
             if(this.globalAlpha <= 0) {

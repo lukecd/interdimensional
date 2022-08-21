@@ -89,10 +89,6 @@ class SoundSource {
                     self.crossFadeLevel -= self.crossFadePerMeasure;
                 }             
             }
-            if(self.getType() == 'rhythm') {
-                console.log("self.measureOscillator=", self.measureOscillator)
-                console.log(self.getType(), "self.crossFadeLevel=", self.crossFadeLevel);
-            }
             self.crossFade.fade.value = self.crossFadeLevel;
 
         }, "1m");

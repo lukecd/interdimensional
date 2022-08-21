@@ -2,6 +2,7 @@ import '../index.css';
 
 import { Link, useHistory } from "react-router-dom";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+
 import { useSigner } from "wagmi";
 import React, { useState, useEffect } from 'react';
 
@@ -14,16 +15,21 @@ import * as Tone from "tone"
  * @returns Top navigation bar
  */
 const Navbar = (props) => {
+
     const [nav, setNav] = useState(false);
     const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+
     const [showPlay, setShowPlay] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
     const handleClick = () => setNav(!nav);
 
     useEffect(() => {
+        console.log('Navbar useEffect called props.demoMode=', props.demoMode)
         if(signer) setLoggedIn(true);
         else setLoggedIn(false);
-    }, [signer]);
+
+        if(!props.demoMode) setLoggedIn(true);
+    }, [signer, props.demoMode]);
 
     const playPause = () => {
         // so i'm struggling to maintain state between my base website and my JavaScript app
@@ -34,7 +40,7 @@ const Navbar = (props) => {
     }
     
     return (
-            
+
             <div className='fixed w-full h-[90px] flex justify-end items-center text-[#15274c]'>
   
             <div>
@@ -70,7 +76,7 @@ const Navbar = (props) => {
                         </Link>
                     </li>
                     <li>
-                        <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/about">
+                        <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 mr-5 rounded-sm' to="/about">
                             About
                         </Link>
                     </li>
@@ -86,7 +92,7 @@ const Navbar = (props) => {
                 )}  
             </ul>
             <div className='hidden lg:flex mr-10'>
-                <ConnectButton showBalance={false}/>
+                <ConnectButton id="connectButton" showBalance={false}/>
             </div>
             {/* hamburger */}
             <div onClick={handleClick} className='lg:hidden z-10 mr-10'>
@@ -140,7 +146,12 @@ const Navbar = (props) => {
             {/* social */}
             <div className='hidden'></div>
         </div>
+
+        
     )
+
+
+    
 }
 
 export default Navbar

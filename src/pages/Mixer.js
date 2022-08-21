@@ -77,16 +77,12 @@ const Mixer = (props) => {
 
     for(let i=0; i<myNFTs.length; i++) {
       const curType = prototypeIdToType(myNFTs[i].prototypeId.toString());
-      console.log(myNFTs[i].prototypeId.toString());
-      console.log(curType)
+
       if(curType == 'drone') drones.push(myNFTs[i]);  
       else if(curType == 'pad') pads.push(myNFTs[i]);
       else if(curType == 'rhythm') rhythms.push(myNFTs[i]);
 
     }
-    console.log("drones ", drones);
-    console.log("pads ", pads);
-    console.log("rhythms ", rhythms);
     setDroneNFTs(drones);
     setPadNFTs(pads);
     setRhythmNFTs(rhythms);

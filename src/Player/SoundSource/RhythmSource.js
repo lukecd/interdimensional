@@ -26,12 +26,9 @@ class RhythmSource extends SoundSource {
         // clear the old one
         if(this.crossFade.a) this.crossFade.a.dispose();
         this.idA = this.randomIntFromRange(0, this.soundFileSorces.length-1);
-
-        console.log("rhythm setting crossfade a=", this.soundFileSorces[this.idA]);
         this.samplerA = new Tone.Sampler(this.soundFileSorces[this.idA]);
-        console.log("this.samplerA=", this.samplerA);
 
-        this.samplerA.volume.value = -10;
+        this.samplerA.volume.value = -25;
 
         const autoPanner = new Tone.AutoPanner("4n");
         const delay = new Tone.Delay(0.2, 0.5);
@@ -47,9 +44,8 @@ class RhythmSource extends SoundSource {
         // clear the old one
         if(this.crossFade.b) this.crossFade.b.dispose();
         this.idB = this.randomIntFromRange(0, this.soundFileSorces.length-1);
-        console.log("rhythm setting crossfade b=", this.soundFileSorces[this.idB]);
         this.samplerB = new Tone.Sampler(this.soundFileSorces[this.idB]);
-        this.samplerB.volume.value = -10;
+        this.samplerB.volume.value = -25;
 
         const autoPanner = new Tone.AutoPanner("4n");
         const delay = new Tone.Delay(0.2, 0.5);
@@ -79,17 +75,18 @@ class RhythmSource extends SoundSource {
         this.loop = new Tone.Loop((time) => {
             let chordNotes = this.conductor.getCurrentChord();        
             let noteIndex = motifArray.shift();
+            const velocity = Math.random();
             motifArray.push(noteIndex);
 
             if(this.conductor.shouldPlay(this)) {
                 if(this.samplerA.loaded) {
                     // TODO: I'm not sure about this logic. 
-                    let note = this.conductor.getMidNote(noteIndex, chordNotes);
+                    let note = this.conductor.getMidNote(noteIndex, chordNotes, velocity);
                     this.samplerA.triggerAttackRelease(note, 2, time);
                 }
                 if(this.samplerB.loaded) {
                     // TODO: I'm not sure about this logic. 
-                    let note = this.conductor.getMidNote(noteIndex, chordNotes);
+                    let note = this.conductor.getMidNote(noteIndex, chordNotes, velocity);
                     this.samplerB.triggerAttackRelease(note, 2, time);
                 }
                 Tone.Draw.schedule(this.conductor.notePlayed(this), time);

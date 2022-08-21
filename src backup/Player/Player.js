@@ -45,7 +45,6 @@ class Player {
                                       this.engine);
         }
         this.emitters = emitters;
-        console.log(window.innerWidth);
         //todo: for some reason if i pass window.innerWidth, the width isn't long enough
         const ground = Matter.Bodies.rectangle(0, window.innerHeight, 3000, 10, { isStatic: true });
         Matter.World.add(engine.world, ground);
