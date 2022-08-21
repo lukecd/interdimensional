@@ -36,8 +36,9 @@ const NFTViewer = (props) => {
 
       decode = atob(decode);
       let nftOBJ = JSON.parse(decode);
+
       setImgURL(nftOBJ.image);
-      setName(nftOBJ.name);
+      setName(nftOBJ.name.substring(0, nftOBJ.name.indexOf("#")));
       setDescription(nftOBJ.description);
       setEdition(nftOBJ.edition)
 

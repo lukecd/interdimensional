@@ -21,15 +21,16 @@ import PreviewEngine from "../Player/PreviewEngine";
  */
 const PrototypeViewer = (props) => {
 
-  let [prototypeId, setPrototypeId] = useState(-1);
-  let [canvasName, setCanvasName] = useState("");
-  let [formattedPrice, setFormattedPrice] = useState(0);
+  const [prototypeId, setPrototypeId] = useState(-1);
+  const [canvasName, setCanvasName] = useState("");
+  const [formattedPrice, setFormattedPrice] = useState(0);
+  const [currentlyMinted, setCurrentlyMinted] = useState(0)
 
-  let [previewEngine, setPreviewEngine] = useState(null);
-  let [isPreviewing, setIsPreviewing] = useState(false);
-  let [part, setPart] = useState("");
-  let [instrument, setInstrument] = useState("");
-  let [soundFiles, setSoundFiles] = useState("");
+  const [previewEngine, setPreviewEngine] = useState(null);
+  const [isPreviewing, setIsPreviewing] = useState(false);
+  const [part, setPart] = useState("");
+  const [instrument, setInstrument] = useState("");
+  const [soundFiles, setSoundFiles] = useState("");
 
   const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
 
@@ -55,13 +56,15 @@ const PrototypeViewer = (props) => {
   });
 
   useEffect(() => {
+    console.log("props.prototype=", props.prototype)
     const pId = props.prototype.prototypeId.toString();
     setPrototypeId(pId);
     setCanvasName("prototype"+pId);
     setFormattedPrice(ethers.utils.formatEther(props.prototype.price.toString()));
     setPart(props.prototype.part);
     setInstrument(props.prototype.instrument);
-
+    setCurrentlyMinted(props.prototype.currentlyMinted.toString());
+console.log("props.prototype.currentlyMinted.toString()=", props.prototype.currentlyMinted.toString())
     let sounds = props.prototype.soundFiles.toString();
 
     //sounds = ethers.utils.toUtf8String(sounds);
@@ -115,7 +118,7 @@ const PrototypeViewer = (props) => {
       <div className="flex flex-col justify-between"> 
       <span className="bg-secondary font-info text-xl mt-2 mr-2 ml-2"> {props.prototype.name} </span>
       <span className="bg-secondary font-info text-sm mt-2 ml-2 mr-2">Price {formattedPrice} MATIC
-      <span className="bg-secondary font-info text-sm mt-2 mr-2"> * Minted {props.prototype.currentlyMinted.toString()}:{props.prototype.editionSize.toString()} </span>
+      <span className="bg-secondary font-info text-sm mt-2 mr-2"> * Minted {currentlyMinted}:{props.prototype.editionSize.toString()} </span>
       </span>
       </div> 
       
