@@ -15,6 +15,7 @@ const App = () => {
     const [demoMode, setDemoMode] = useState(true);
 
     return (
+
         <div name='top' className='w-full h-full  min-h-screen top-0 bg-background'>
             <Canvas className='fixed'
                     height={window.innerHeight} 
@@ -23,7 +24,7 @@ const App = () => {
                     setPlay={setPlay}
                     setDemoMode={setDemoMode}
                     />
-            <div className='absolute w-full z-1 top-0 bg-background'>
+            <div className='absolute w-full h-screen z-1 top-0 bg-background'>
                 <Navbar className='bg-black z-3' play={play} setPlay={setPlay} demoMode={demoMode}/>
                 <Routes>
                     <Route path="/" element={<Stage />} />

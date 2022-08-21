@@ -24,7 +24,6 @@ const Navbar = (props) => {
     const handleClick = () => setNav(!nav);
 
     useEffect(() => {
-        console.log('Navbar useEffect called props.demoMode=', props.demoMode)
         if(signer) setLoggedIn(true);
         else setLoggedIn(false);
 

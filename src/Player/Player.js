@@ -50,6 +50,7 @@ class Player {
         requestAnimationFrame(this.animate.bind(this));
 
         this.renderer = new SplashScreenRenderer(0, 0, this.width, this.height, this.bgColor, this.colors, this.engine, this, ctx);
+        console.log('created renderered  this.renderer=',  this.renderer)
     }
 
     /**
